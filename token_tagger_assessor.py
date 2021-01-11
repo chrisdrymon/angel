@@ -71,6 +71,7 @@ for file in indir[5:]:
         for morph in morphs:
             morph.correct_prediction_count = 0
             morph.labels = []
+        accuracy_dict[file] = {}
 
         # A list to hold the token tensors
         samples = []
@@ -122,21 +123,18 @@ for file in indir[5:]:
             for i, predicted_tensor in enumerate(morph.lstm.predict(samples)):
                 try:
                     predicted = morph.tags[int(np.argmax(predicted_tensor))]
-                    # print(f'Possible tags: {morph.tags}')
-                    # print(f'Predicted tensor: {predicted_tensor}')
-                    # print(f'Predicted tag: {predicted}')
                 except IndexError:
-                    # print(f'Predicted tag: {"-"}')
                     predicted = '-'
-                # print(f'Actual tag: {morph.labels[i]}')
                 if predicted == morph.labels[i]:
                     morph.correct_prediction_count += 1
-                # time.sleep(1)
             morph.accuracy = morph.correct_prediction_count / token_count
-            accuracy_dict[file] = {morph.title: morph.accuracy}
+            accuracy_dict[file][morph.title] = morph.accuracy
             print(f'{morph.title} accuracy: {morph.accuracy:.02%}')
 
-with open('accuracy_records.json', 'w') as outfile:
+        print(accuracy_dict)
+
+# Save model accuracy to a file that can be compared with others later
+with open(os.path.join('jsons', 'accuracy_records.json'), 'w') as outfile:
     json.dump(accuracy_dict, outfile)
 
 # This is for assessing DNN's on top of the LSTMs
