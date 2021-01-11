@@ -34,7 +34,8 @@ class ModelSaver(tf.keras.callbacks.Callback):
         # Save the best model based on validation accuracy.
         if logs['val_accuracy'] > self.best_val_acc:
             self.best_val_acc = logs['val_accuracy']
-            model_name = os.path.join('models', f'pos-m1x64-{logs["accuracy"]:.3f}val{logs["val_accuracy"]:.3f}')
+            model_name = os.path.join('models',
+                                      f'pos-1x128-{logs["accuracy"]:.3f}val{logs["val_accuracy"]:.3f}-fullAGDT')
             tf.keras.models.save_model(model, model_name, save_format='h5')
             # The following is the save command that doesn't work.
             # tf.keras.models.save_model(model, model_name)
@@ -69,7 +70,7 @@ degree_tags = ['p', 'c', 's']
 relevant_tagset = pos_tags
 
 # Search through every work in the annotated Greek folder
-for file in indir[:5]:
+for file in indir:
     if file[-4:] == '.xml':
         file_count += 1
         print(file_count, file)
@@ -129,8 +130,7 @@ tf.config.experimental.set_memory_growth(gpu[0], True)
 
 # Enter the samples and labels into Tensorflow to train a neural network
 model = tf.keras.Sequential()
-model.add(layers.Bidirectional(layers.LSTM(64, activation='relu'), input_shape=(21, 219)))
-
+model.add(layers.Bidirectional(layers.LSTM(128, activation='relu'), input_shape=(21, 219)))
 model.add(layers.Dense(len(relevant_tagset) + 1, activation='softmax'))
 modelSaver = ModelSaver()
 
