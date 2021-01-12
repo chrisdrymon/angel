@@ -35,7 +35,7 @@ class ModelSaver(tf.keras.callbacks.Callback):
         if logs['val_accuracy'] > self.best_val_acc:
             self.best_val_acc = logs['val_accuracy']
             model_name = os.path.join('models',
-                                      f'pos-1x128-{logs["accuracy"]:.3f}val{logs["val_accuracy"]:.3f}-fullAGDT')
+                                      f'pos-1x256-{logs["accuracy"]:.3f}val{logs["val_accuracy"]:.3f}-fullAGDT')
             tf.keras.models.save_model(model, model_name, save_format='h5')
             # The following is the save command that doesn't work.
             # tf.keras.models.save_model(model, model_name)
@@ -130,7 +130,7 @@ tf.config.experimental.set_memory_growth(gpu[0], True)
 
 # Enter the samples and labels into Tensorflow to train a neural network
 model = tf.keras.Sequential()
-model.add(layers.Bidirectional(layers.LSTM(128, activation='relu'), input_shape=(21, 219)))
+model.add(layers.Bidirectional(layers.LSTM(256, activation='relu'), input_shape=(21, 219)))
 model.add(layers.Dense(len(relevant_tagset) + 1, activation='softmax'))
 modelSaver = ModelSaver()
 
