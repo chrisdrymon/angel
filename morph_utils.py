@@ -38,24 +38,33 @@ class ModelSaver(tf.keras.callbacks.Callback):
 
 class Morphs:
     """Hold data for one aspect of morphology."""
-    def __init__(self, title, tags, lstm):
+    def __init__(self, title, tags, lstm, dnn):
         self.title = title
         self.tags = tags
         self.lstm = lstm
+        self.dnn = dnn
 
 
 def create_morph_classes():
     # Load each trained model for testing
     pos_lstm = tf.keras.models.load_model(os.path.join('models', 'pos-1x64-0.945val0.907'))
-    pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-DNN-1x20-0.925val0.914'))
+    pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.925val0.914'))
     person_lstm = tf.keras.models.load_model(os.path.join('models', 'person-1x64-0.995val0.979'))
+    person_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.998val0.982'))
     number_lstm = tf.keras.models.load_model(os.path.join('models', 'number-1x64-0.990val0.967'))
+    number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970'))
     tense_lstm = tf.keras.models.load_model(os.path.join('models', 'tense-1x64-0.996val0.973'))
+    tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-1x20-0.998val0.975'))
     mood_lstm = tf.keras.models.load_model(os.path.join('models', 'mood-1x64-0.995val0.978'))
+    mood_dnn = tf.keras.models.load_model(os.path.join('models', 'mood-dnn-1x20-0.998val0.979'))
     voice_lstm = tf.keras.models.load_model(os.path.join('models', 'voice-1x64-0.996val0.977'))
+    voice_dnn = tf.keras.models.load_model(os.path.join('models', 'voice-dnn-1x20-0.998val0.979'))
     gender_lstm = tf.keras.models.load_model(os.path.join('models', 'gender-1x64-0.962val0.909'))
+    gender_dnn = tf.keras.models.load_model(os.path.join('models', 'gender-dnn-1x20-0.967val0.912'))
     case_lstm = tf.keras.models.load_model(os.path.join('models', 'case-1x64-0.977val0.934'))
+    case_dnn = tf.keras.models.load_model(os.path.join('models', 'case-dnn-1x20-0.981val0.937'))
     degree_lstm = tf.keras.models.load_model(os.path.join('models', 'degree-1x64-0.999val0.999'))
+    degree_dnn = tf.keras.models.load_model(os.path.join('models', 'degree-dnn-1x20-0.999val0.999'))
 
     # The possible tags for each item of morphology
     pos_tags = ('l', 'n', 'a', 'r', 'c', 'i', 'p', 'v', 'd', 'm', 'g', 'u')
@@ -69,15 +78,15 @@ def create_morph_classes():
     degree_tags = ('p', 'c', 's')
 
     # Create a class instance for each aspect of morphology
-    pos = Morphs('pos', pos_tags, pos_lstm)
-    person = Morphs('person', person_tags, person_lstm)
-    number = Morphs('number', number_tags, number_lstm)
-    tense = Morphs('tense', tense_tags, tense_lstm)
-    mood = Morphs('mood', mood_tags, mood_lstm)
-    voice = Morphs('voice', voice_tags, voice_lstm)
-    gender = Morphs('gender', gender_tags, gender_lstm)
-    case = Morphs('case', case_tags, case_lstm)
-    degree = Morphs('degree', degree_tags, degree_lstm)
+    pos = Morphs('pos', pos_tags, pos_lstm, pos_dnn)
+    person = Morphs('person', person_tags, person_lstm, person_dnn)
+    number = Morphs('number', number_tags, number_lstm, number_dnn)
+    tense = Morphs('tense', tense_tags, tense_lstm, tense_dnn)
+    mood = Morphs('mood', mood_tags, mood_lstm, mood_dnn)
+    voice = Morphs('voice', voice_tags, voice_lstm, voice_dnn)
+    gender = Morphs('gender', gender_tags, gender_lstm, gender_dnn)
+    case = Morphs('case', case_tags, case_lstm, case_dnn)
+    degree = Morphs('degree', degree_tags, degree_lstm, degree_dnn)
 
     return pos, person, number, tense, mood, voice, gender, case, degree
 
