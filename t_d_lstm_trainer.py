@@ -16,7 +16,9 @@ corpora_folder = os.path.join('corpora', 'greek', 'annotated', 'perseus-771dca2'
 indir = os.listdir(corpora_folder)
 file_count = 0
 train_data = []
-wordform_tensors = []
+lstm1_inputs = []
+
+# Labels are of the form [sentence1->[correct_pos, correct_pos, ...], sentence2->[correct_pos, correct_pos, ...], ...]]
 labels = []
 dnn_input_array = []
 td_lstm_input_array = []
@@ -28,8 +30,8 @@ pos, person, number, tense, mood, voice, gender, case, degree = create_morph_cla
 morphs = (pos, person, number, tense, mood, voice, gender, case, degree)
 
 # Change this for each aspect of morphology to be trained
-target_morphology = degree
-corpus_size = 5
+target_morphology = pos
+corpus_size = 1
 
 # Search through every work in the annotated Greek folder
 for file in indir[:corpus_size]:
@@ -41,10 +43,21 @@ for file in indir[:corpus_size]:
         xml_file = open(os.path.join(corpora_folder, file), 'r', encoding='utf-8')
         soup = BeautifulSoup(xml_file, 'xml')
         sentences = soup.find_all('sentence')
+
+        # The data is going to be processed and stored sentence by sentence. This will be slow, but will make the
+        # creation of time-series input data much easier to keep track of.
         for sentence in sentences:
             tokens = sentence.find_all(['word', 'token'])
+            sentence_of_inputs = []
+            sentence_of_labels = []
             for token in tokens:
-                if token.has_attr('form') and token.has_attr('postag'):
+
+                # Elliptical tokens were fine for training the character-reading NN's so long as they contained both a
+                # form and postags, but they're bad for the sentence-level LSTM training. Fortunately, within AGDT, the
+                # only tokens with missing wordforms or postags are artificial tokens. They can all be ignored without
+                # damaging time-series order because all but two of them occur at the end of the sentence. The two
+                # exceptions can safely be ignored as well. I manually checked.
+                if token.has_attr('artificial') is False:
 
                     # In the AGDT corpus, 218 unique characters occur. Hence the size of the character tensor.
                     blank_character_tensor = np.array([0]*219, dtype=np.bool_)
@@ -63,7 +76,7 @@ for file in indir[:corpus_size]:
                         token_tensor[21 - wordform_length + i] = character_tensor
 
                     # This tensor collects all the wordform tensors
-                    wordform_tensors.append(token_tensor)
+                    sentence_of_inputs.append(token_tensor)
 
                     # We're only training one morphology aspect per run, so only need one morph's labels.
                     label_tensor = [0] * (len(target_morphology.tags) + 1)
@@ -76,16 +89,19 @@ for file in indir[:corpus_size]:
                     except ValueError:
                         print(sentence['id'], token['id'], token['form'])
                         label_tensor[-1] = 1
-                    labels.append(label_tensor)
+                    sentence_of_labels.append(label_tensor)
+            sentence_of_inputs = np.array(sentence_of_inputs, dtype=np.bool_)
+            lstm1_inputs.append(sentence_of_inputs)
+            labels.append(sentence_of_labels)
 
 # Convert the wordform samples to a numpy array
-wordform_tensors = np.array(wordform_tensors)
+lstm1_inputs = np.array(lstm1_inputs, dtype=np.bool_)
 
 print('Running LSTM samples through LSTMs. This will take a minute...')
 # Run the wordform tensors through each of the LSTM's. Each of their softmax outputs will be used to train the target
 # morph's DNN.
 for morph in morphs:
-    morph.predicted = morph.lstm.predict(wordform_tensors)
+    morph.predicted = morph.lstm.predict(lstm1_inputs)
     print(f'{morph.title} LSTM predictions complete...')
 
 # Predicted softmax arrays are concatenated before input into the DNN.
@@ -119,7 +135,7 @@ while i < len(pos.dnn_output):
     td_lstm_input_array.append(concatted_dnn_outputs)
     i += 1
 
-print('Creating sentence-level LSTM training data...')
+print('Creating LSTM 2 training data...')
 # Search through every work in the annotated Greek folder. We have to go back through all this because I want the
 # tensors to be based on sentences.
 td_array_index = 0
@@ -136,23 +152,36 @@ for file in indir[:corpus_size]:
         soup = BeautifulSoup(xml_file, 'xml')
         sentences = soup.find_all('sentence')
         for sentence in sentences:
-            tokens = sentence.find_all(['word', 'token'])
-            for i, token in enumerate(tokens):
+            toks = sentence.find_all(['word', 'token'])
+            tokens = []
 
+            # I have to deal with tokens which have missing forms or postags. There are 3 options: 1) Fill them with a
+            # blank, 2) Skip them entirely. Act like they were never in the sentence, 3) Skip the whole sentence so as
+            # to not give contaminated training data. The first option may confuse a trainer into thinking the next
+            # word is at the beginning of a sentence. The second option will shift the word order of the rest of
+            # the sentence. As this is a fairly rare occurrence, I think 3 is the best option. That's what I'm going to
+            # do. I'll have to go back to the beginning of the program and change some code.
+            # There's another problem: Elliptical tokens were fine for training the character-reading NN's so long as
+            # they contained both a form and postags, but they're bad for the sentence-level LSTM training. They need
+            # to be left out. I have to go back to the beginning and fix that.
+            for tok in toks:
+                if tok.has_attr('form') and tok.has_attr('postag'):
+                    tokens.append(tok)
+            for token in tokens:
                 # This tensor will hold the entire time series input for this token
-                ts_input_tensor = []
+                one_time_series = []
                 adder = -10
-                if token.has_attr('form') and token.has_attr('postag'):
+
 
                     # Record blank tensors for samples that occur before the first token of a sentence
                     while i + adder < 0:
-                        ts_input_tensor.append(blank_concat_tensor)
+                        one_time_series.append(blank_concat_tensor)
 
                     while adder <= 10:
                         try:
-                            ts_input_tensor.append(td_lstm_input_array[])
+                            one_time_series.append(td_lstm_input_array[td_array_index])
                         except KeyError:
-                            ts_input_tensor.append(blank_concat_tensor)
+                            one_time_series.append(blank_concat_tensor)
 
                     td_array_index += 1
 
