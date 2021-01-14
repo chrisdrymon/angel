@@ -50,7 +50,7 @@ def create_morph_classes():
     pos_lstm = tf.keras.models.load_model(os.path.join('models', 'pos-1x64-0.945val0.907'))
     pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.925val0.914'))
     person_lstm = tf.keras.models.load_model(os.path.join('models', 'person-1x64-0.995val0.979'))
-    person_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.998val0.982'))
+    person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-1x20-0.998val0.982'))
     number_lstm = tf.keras.models.load_model(os.path.join('models', 'number-1x64-0.990val0.967'))
     number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970'))
     tense_lstm = tf.keras.models.load_model(os.path.join('models', 'tense-1x64-0.996val0.973'))

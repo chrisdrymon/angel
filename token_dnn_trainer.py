@@ -82,16 +82,16 @@ print('Running LSTM samples through LSTMs. This will take a minute...')
 # Run the wordform tensors through each of the LSTM's. Each of their softmax outputs will be used to train the target
 # morph's DNN.
 for morph in morphs:
-    morph.predicted = morph.lstm.predict(wordform_tensors)
+    morph.lstm_output = morph.lstm.predict(wordform_tensors)
     print(f'{morph.title} LSTM predictions complete...')
 
 # Predicted softmax arrays are concatenated before input into the DNN.
 print('Concatenating LSTM output tensors...')
 i = 0
-while i < len(pos.predicted):
-    concatted_lstm_outputs = np.concatenate((pos.predicted[i], person.predicted[i], number.predicted[i],
-                                             tense.predicted[i], mood.predicted[i], voice.predicted[i],
-                                             gender.predicted[i], case.predicted[i], degree.predicted[i]))
+while i < len(pos.lstm_output):
+    concatted_lstm_outputs = np.concatenate((pos.lstm_output[i], person.lstm_output[i], number.lstm_output[i],
+                                             tense.lstm_output[i], mood.lstm_output[i], voice.lstm_output[i],
+                                             gender.lstm_output[i], case.lstm_output[i], degree.lstm_output[i]))
     train_data.append(concatted_lstm_outputs)
     i += 1
 samples = np.array(train_data)
