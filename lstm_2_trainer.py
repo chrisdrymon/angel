@@ -12,7 +12,7 @@ from morph_utils import create_morph_classes, ModelSaver
 gpu = tf.config.experimental.list_physical_devices('GPU')
 tf.config.experimental.set_memory_growth(gpu[0], True)
 
-json_files = os.listdir('jsons')
+pickles = os.listdir(os.path.join('data', 'pickles'))
 
 # Load the morphology classes
 pos, person, number, tense, mood, voice, gender, case, degree = create_morph_classes()
@@ -24,16 +24,16 @@ corpus_size = 'fullAGDT'
 
 # First check if the processed data already exists. This input data, however, has not been split into time-series
 # samples yet.
-if 'lstm_2_inputs-5-deep.pickle' in json_files and 'lstm_2_labels-5-deep.pickle' in json_files:
+if 'lstm_2_inputs-1st5.pickle' in pickles and 'lstm_2_labels-1st5.pickle' in pickles:
     print('Loading pickled data...')
-    lstm_2_pre_time_series = pickle.load(open(os.path.join('jsons', 'lstm_2_inputs-5-deep.pickle'), 'rb'))
-    labels = pickle.load(open(os.path.join('jsons', 'lstm_2_labels-5-deep.pickle'), 'rb'))
+    lstm_2_pre_time_series = pickle.load(open(os.path.join('data', 'pickles', 'lstm_2_inputs-1st5.pickle'), 'rb'))
+    labels = pickle.load(open(os.path.join('data', 'pickles', 'lstm_2_labels-1st5.pickle'), 'rb'))
     print(f'Labels shape: {labels.shape}')
 
 # If the data does not exist, then we must create it.
 else:
     print('Building input data and labels...')
-    corpora_folder = os.path.join('corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
+    corpora_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
     indir = os.listdir(corpora_folder)
     file_count = 0
     train_data = []
@@ -155,19 +155,14 @@ else:
     lstm_2_pre_time_series = np.array(lstm_2_pre_time_series)
     labels = np.array(labels, dtype=np.bool_)
 
-    pickle.dump(lstm_2_pre_time_series, open(os.path.join('jsons', f'lstm_2_inputs-{corpus_size}-deep.pickle'), 'wb'))
-    pickle.dump(labels, open(os.path.join('jsons', f'lstm_2_labels-{corpus_size}-deep.pickle'), 'wb'))
+    pickle.dump(lstm_2_pre_time_series, open(os.path.join('data', 'pickles',
+                                                          f'lstm_2_inputs-1st5.pickle'), 'wb'))
+    pickle.dump(labels, open(os.path.join('jsons', f'lstm_2_labels-1st5.pickle'), 'wb'))
 
 empty_token = np.array([0]*55, dtype=np.bool_)
 samples = []
 total_samples = 0
 sample_count = 0
-
-# # This is to track progress
-# for sentence in lstm_2_pre_time_series:
-#     total_samples += len(sentence)
-# print(f'{total_samples} total samples...')
-# print(f'{len(labels)} total labels...')
 
 # Convert pre-time-series inputs into time series samples
 print('Converting input data to time-series format...')
@@ -187,15 +182,13 @@ for sentence in lstm_2_pre_time_series:
             begin_window += 1
         one_sample = np.array(one_sample)
         samples.append(one_sample)
-        # sample_count += 1
-        # if sample_count % 100 == 0:
-        #     print(f'{sample_count}/{total_samples} samples created...')
+
 print(f'One sample shape: {one_sample.shape}')
 
 samples = np.array(samples)
 print(f'Samples shape: {samples.shape}')
 
-print('\nTime to train the LSTM #2...')
+print('\nTime to train LSTM #2...')
 print(f'Samples: {len(samples)}')
 print(f'Labels: {len(labels)}')
 
@@ -206,11 +199,23 @@ val_data = np.array(samples[split:])
 train_labels = np.array(labels[:split], dtype=np.bool_)
 val_labels = np.array(labels[split:], dtype=np.bool_)
 
+cells = 128
+nn_layers = 1
+model_title = 'lstm2'
+
 # Enter the samples and labels into Tensorflow to train a neural network
 model = tf.keras.Sequential()
-model.add(layers.Bidirectional(layers.LSTM(64, activation='relu'), input_shape=(21, 55)))
+if nn_layers > 1:
+    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', return_sequences=True), input_shape=(21, 55)))
+    more_layers = nn_layers - 1
+    while more_layers >= 1:
+        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh')))
+        more_layers -= 1
+else:
+    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh'), input_shape=(21, 55)))
 model.add(layers.Dense(len(target_morphology.tags) + 1, activation='softmax'))
-modelSaver = ModelSaver(target_morphology.title, 'lstm2')
+modelSaver = ModelSaver(target_morphology.title, model_title, nn_layers, cells)
+# optimizer = tf.keras.optimizers.Adam(learning_rate=0.1, clipnorm=1.0, clipvalue=0.5)
 
 model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
 model.fit(train_data, train_labels, epochs=20, validation_data=(val_data, val_labels), verbose=2,

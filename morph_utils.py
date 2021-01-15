@@ -8,13 +8,15 @@ import json
 # Create a custom model saver
 class ModelSaver(tf.keras.callbacks.Callback):
     """A custom tensorflow model saver that returns useful information"""
-    def __init__(self, morph_title, nn_type):
+    def __init__(self, morph_title, nn_type, nn_layers, cells):
         super().__init__()
         self.best_val_acc = 0
         self.best_epoch = 0
         self.new_best = False
         self.morph_title = morph_title
         self.nn_type = nn_type
+        self.nn_layers = nn_layers
+        self.cells = cells
 
     def on_train_begin(self, logs=None):
         self.best_val_acc = 0
@@ -24,8 +26,9 @@ class ModelSaver(tf.keras.callbacks.Callback):
         # Save the best model based on validation accuracy.
         if logs['val_accuracy'] > self.best_val_acc:
             self.best_val_acc = logs['val_accuracy']
-            model_name = os.path.join('models', f'{self.morph_title}-{self.nn_type}-1x64-{logs["accuracy"]:.3f}'
-                                                f'val{logs["val_accuracy"]:.3f}')
+            model_name = os.path.join('models', f'{self.morph_title}-{self.nn_type}-{self.nn_layers}x{self.cells}-'
+                                                f'{logs["accuracy"]:.3f}'
+                                                f'val{logs["val_accuracy"]:.3f}.h5')
             tf.keras.models.save_model(self.model, model_name, save_format='h5')
             self.best_epoch = epoch + 1
             self.new_best = True
@@ -47,24 +50,24 @@ class Morphs:
 
 def create_morph_classes():
     # Load each trained model for testing
-    pos_lstm = tf.keras.models.load_model(os.path.join('models', 'pos-1x64-0.945val0.907'))
-    pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.925val0.914'))
-    person_lstm = tf.keras.models.load_model(os.path.join('models', 'person-1x64-0.995val0.979'))
-    person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-1x20-0.998val0.982'))
-    number_lstm = tf.keras.models.load_model(os.path.join('models', 'number-1x64-0.990val0.967'))
-    number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970'))
-    tense_lstm = tf.keras.models.load_model(os.path.join('models', 'tense-1x64-0.996val0.973'))
-    tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-1x20-0.998val0.975'))
-    mood_lstm = tf.keras.models.load_model(os.path.join('models', 'mood-1x64-0.995val0.978'))
-    mood_dnn = tf.keras.models.load_model(os.path.join('models', 'mood-dnn-1x20-0.998val0.979'))
-    voice_lstm = tf.keras.models.load_model(os.path.join('models', 'voice-1x64-0.996val0.977'))
-    voice_dnn = tf.keras.models.load_model(os.path.join('models', 'voice-dnn-1x20-0.998val0.979'))
-    gender_lstm = tf.keras.models.load_model(os.path.join('models', 'gender-1x64-0.962val0.909'))
-    gender_dnn = tf.keras.models.load_model(os.path.join('models', 'gender-dnn-1x20-0.967val0.912'))
-    case_lstm = tf.keras.models.load_model(os.path.join('models', 'case-1x64-0.977val0.934'))
-    case_dnn = tf.keras.models.load_model(os.path.join('models', 'case-dnn-1x20-0.981val0.937'))
-    degree_lstm = tf.keras.models.load_model(os.path.join('models', 'degree-1x64-0.999val0.999'))
-    degree_dnn = tf.keras.models.load_model(os.path.join('models', 'degree-dnn-1x20-0.999val0.999'))
+    pos_lstm = tf.keras.models.load_model(os.path.join('models', 'pos-1x64-0.945val0.907-1st5.h5'))
+    pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.925val0.914-1st5.h5'))
+    person_lstm = tf.keras.models.load_model(os.path.join('models', 'person-1x64-0.995val0.979-1st5.h5'))
+    person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-1x20-0.998val0.982-1st5.h5'))
+    number_lstm = tf.keras.models.load_model(os.path.join('models', 'number-1x64-0.990val0.967-1st5.h5'))
+    number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970-1st5.h5'))
+    tense_lstm = tf.keras.models.load_model(os.path.join('models', 'tense-1x64-0.996val0.973-1st5.h5'))
+    tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-1x20-0.998val0.975-1st5.h5'))
+    mood_lstm = tf.keras.models.load_model(os.path.join('models', 'mood-1x64-0.995val0.978-1st5.h5'))
+    mood_dnn = tf.keras.models.load_model(os.path.join('models', 'mood-dnn-1x20-0.998val0.979-1st5.h5'))
+    voice_lstm = tf.keras.models.load_model(os.path.join('models', 'voice-1x64-0.996val0.977-1st5.h5'))
+    voice_dnn = tf.keras.models.load_model(os.path.join('models', 'voice-dnn-1x20-0.998val0.979-1st5.h5'))
+    gender_lstm = tf.keras.models.load_model(os.path.join('models', 'gender-1x64-0.962val0.909-1st5.h5'))
+    gender_dnn = tf.keras.models.load_model(os.path.join('models', 'gender-dnn-1x20-0.967val0.912-1st5.h5'))
+    case_lstm = tf.keras.models.load_model(os.path.join('models', 'case-1x64-0.977val0.934-1st5.h5'))
+    case_dnn = tf.keras.models.load_model(os.path.join('models', 'case-dnn-1x20-0.981val0.937-1st5.h5'))
+    degree_lstm = tf.keras.models.load_model(os.path.join('models', 'degree-1x64-0.999val0.999-1st5.h5'))
+    degree_dnn = tf.keras.models.load_model(os.path.join('models', 'degree-dnn-1x20-0.999val0.999-1st5.h5'))
 
     # The possible tags for each item of morphology
     pos_tags = ('l', 'n', 'a', 'r', 'c', 'i', 'p', 'v', 'd', 'm', 'g', 'u')

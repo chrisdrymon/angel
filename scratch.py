@@ -16,7 +16,7 @@ json_files = os.listdir('jsons')
 
 # First check if the processed data already exists. This input data, however, has not been split into time-series
 # samples yet.
-if 'lstm_2_inputs-5-deep.pickle' in json_files and 'lstm_2_labels-5-deep.pickle' in json_files:
+if 'lstm_2_inputs-fullAGDT.pickle' in json_files and 'lstm_2_labels-fullAGDT.pickle' in json_files:
     lstm_2_pre_time_series = pickle.load(open(os.path.join('jsons', 'lstm_2_inputs_5-deep.pickle'), 'rb'))
     labels = pickle.load(open(os.path.join('jsons', 'lstm_2_labels-5-deep.pickle'), 'rb'))
 
@@ -45,7 +45,7 @@ else:
     target_morphology = pos
 
     # Search through every work in the annotated Greek folder
-    for file in indir[:5]:
+    for file in indir:
         if file[-4:] == '.xml':
             file_count += 1
             print(file_count, file)
@@ -90,7 +90,7 @@ else:
 
     # These labels will be used to train LSTM 2
     labels = np.array(labels, dtype=np.bool_)
-    pickle.dump(labels, open(os.path.join('jsons', 'lstm_2_labels-5-deep.pickle'), 'wb'))
+    pickle.dump(labels, open(os.path.join('jsons', 'lstm_2_labels-fullAGDT.pickle'), 'wb'))
 print(f'{missing_label} missing labels.')
 print(f'{dash_label} "-" labels.')
 print(f'{token_count} total tokens.')
