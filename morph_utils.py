@@ -24,7 +24,7 @@ class ModelSaver(tf.keras.callbacks.Callback):
         # Save the best model based on validation accuracy.
         if logs['val_accuracy'] > self.best_val_acc:
             self.best_val_acc = logs['val_accuracy']
-            model_name = os.path.join('models', f'{self.morph_title}-{self.nn_type}-1x20-{logs["accuracy"]:.3f}'
+            model_name = os.path.join('models', f'{self.morph_title}-{self.nn_type}-1x64-{logs["accuracy"]:.3f}'
                                                 f'val{logs["val_accuracy"]:.3f}')
             tf.keras.models.save_model(self.model, model_name, save_format='h5')
             self.best_epoch = epoch + 1
