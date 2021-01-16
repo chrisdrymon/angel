@@ -134,7 +134,7 @@ for file in indir[5:]:
         print(accuracy_dict)
 
 # Save model accuracy to a file that can be compared with others later
-with open(os.path.join('jsons', 'accuracy_records.json'), 'w') as outfile:
+with open(os.path.join('jsons', 'data/jsons/accuracy_records.json'), 'w') as outfile:
     json.dump(accuracy_dict, outfile)
 
 # This is for assessing DNN's on top of the LSTMs

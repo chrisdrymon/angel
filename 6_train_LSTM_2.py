@@ -192,7 +192,7 @@ print('\nTime to train LSTM #2...')
 print(f'Samples: {len(samples)}')
 print(f'Labels: {len(labels)}')
 
-# Split data into an 80%/20% training/validation split.
+# The new validation data is going to be the final 7 works in AGDT.
 split = int(.8*len(labels))
 train_data = np.array(samples[:split])
 val_data = np.array(samples[split:])

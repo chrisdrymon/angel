@@ -49,7 +49,7 @@ class Morphs:
 
 
 def create_morph_classes():
-    # Load each trained model for testing
+    """Create a class instance for each part of speech aspect."""
     pos_lstm = tf.keras.models.load_model(os.path.join('models', 'pos-1x64-0.945val0.907-1st5.h5'))
     pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.925val0.914-1st5.h5'))
     person_lstm = tf.keras.models.load_model(os.path.join('models', 'person-1x64-0.995val0.979-1st5.h5'))
@@ -152,3 +152,84 @@ def create_samples_and_labels(morphs, corpora_size):
                             except IndexError:
                                 morph.labels.append('-')
     return morphs
+
+
+def return_all_treebank_annotators():
+    """Search all Greek treebanks and return a list of its annotators' names and abbreviated names."""
+    agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
+    gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
+    ignore_names = ['arethusa']
+    all_files = []
+    annotators = []
+    short_annotators = {}
+    for file in os.listdir(agdt_folder):
+        all_files.append(os.path.join(agdt_folder, file))
+    for file in os.listdir(gorman_folder):
+        all_files.append(os.path.join(gorman_folder, file))
+    file_count = 0
+    for file in all_files:
+        if file[-4:] == '.xml':
+            file_count += 1
+            print(file_count, file)
+            xml_file = open(file, 'r', encoding='utf-8')
+            soup = BeautifulSoup(xml_file, 'xml')
+            responsibility_statement = soup.find_all('respStmt')
+            for responsible in responsibility_statement:
+                if 'annotator' in responsible.find('resp').text:
+                    person_name = responsible.find('persName')
+                    name = person_name.find('name')
+                    short = person_name.find('short')
+                    if short:
+                        short_annotators[short.text] = name.text
+                    if name.text not in ignore_names:
+                        if short:
+                            print(f'{short.text}: {name.text}')
+                        if name.text not in annotators:
+                            annotators.append(name.text)
+            annots = soup.find_all('annotator')
+            for annotator in annots:
+                try:
+                    name = annotator.find('name').text
+                    short = annotator.find('short').text
+                    if name:
+                        print(f'{short}: {name}')
+                        if name not in ignore_names and name not in annotators:
+                            annotators.append(name)
+                except AttributeError:
+                    pass
+    return annotators, short_annotators
+
+
+def return_file_annotators(soup):
+    """Search this treebank and return a list of its annotators' names and abbreviated names."""
+    annotators = []
+    ignore_names = ['arethusa']
+    responsibility_statement = soup.find_all('respStmt')
+    for responsible in responsibility_statement:
+        if 'annotator' in responsible.find('resp').text:
+            person_name = responsible.find('persName')
+            name = person_name.find('name')
+            if name.text not in ignore_names and name.text not in annotators:
+                annotators.append(name.text)
+    annots = soup.find_all('annotator')
+    for annotator in annots:
+        try:
+            name = annotator.find('name').text
+            if name:
+                if name not in ignore_names and name not in annotators:
+                    annotators.append(name)
+        except AttributeError:
+            pass
+    return annotators
+
+
+def return_sentence_annotators(sentence, short_annotators):
+    """Return a list of this sentence's annotators"""
+    sentence_annotators = []
+    xml_sen_ann = sentence.find_all('annotator', 'primary', 'seconday')
+    for annotator in xml_sen_ann:
+        try:
+            sentence_annotators.append(short_annotators[annotator.text])
+        except KeyError:
+            sentence_annotators.append(annotator.text)
+    return sentence_annotators
