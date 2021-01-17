@@ -3,12 +3,12 @@ from bs4 import BeautifulSoup
 from collections import Counter
 import json
 import time
-import pandas as pd
 from utilities_morph import return_file_annotators
 
 agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 ignore_names = ['arethusa']
+problems = []
 all_files = []
 
 for file in os.listdir(agdt_folder):
@@ -17,6 +17,8 @@ for file in os.listdir(gorman_folder):
     all_files.append(os.path.join(gorman_folder, file))
 with open(os.path.join('data', 'jsons', 'short_annotators.json'), encoding='utf-8') as json_file:
     short_annotators = json.load(json_file)
+with open(os.path.join('data', 'jsons', 'annotators.json'), encoding='utf-8') as json_file:
+    all_annotators = json.load(json_file)
 
 file_count = 0
 for file in all_files[11:]:
@@ -34,6 +36,8 @@ for file in all_files[11:]:
                     sentence_annotators.append(short_annotators[annotator.text])
                 except KeyError:
                     sentence_annotators.append(annotator.text)
+                    if annotator.text not in problems:
+                        problems.append(annotator.text)
             print(sentence_annotators)
             tokens = sentence.find_all('token', 'word')
-            time.sleep(1)
+print(problems)
