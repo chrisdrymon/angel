@@ -233,3 +233,8 @@ def return_sentence_annotators(sentence, short_annotators):
         except KeyError:
             sentence_annotators.append(annotator.text)
     return sentence_annotators
+
+
+def elision_normalize(s):
+    return s.replace("\u02BC", "\u2019").replace("\u1FBF", "\u2019").replace("\u0027", "\u2019").\
+        replace("\u1FBD", "\u2019")

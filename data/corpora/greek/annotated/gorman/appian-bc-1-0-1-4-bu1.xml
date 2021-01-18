@@ -3815,7 +3815,7 @@
       <word id="4" form="ἔκριναν" lemma="κρίνω" postag="v3paia---" relation="OBJ" head="1"/>
       <word id="5" form="ἐς" lemma="εἰς" postag="r--------" relation="AuxP" head="8"/>
       <word id="6" form="τὸ" lemma="ὁ" postag="l-s---na-" relation="ATR" head="7"/>
-      <word id="7" form="Καπιτώ̄λιον" lemma="Καπιτώλιον" postag="n-s---na-" relation="OBJ" head="5"/>
+      <word id="7" form="Καπιτώλιον" lemma="Καπιτώλιον" postag="n-s---na-" relation="OBJ" head="5"/>
       <word id="8" form="ἀνῄεσαν" lemma="ἄνειμι" postag="v3piia---" relation="PRED" head="0"/>
       <word id="9" form="." lemma="punc1" postag="u--------" relation="AuxK" head="0"/>
    </sentence>

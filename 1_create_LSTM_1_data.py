@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 import time
 import json
 import numpy as np
+from utilities_morph import return_sentence_annotators, return_file_annotators
+import greek_normalisation
 
 corpora_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 indir = os.listdir(corpora_folder)
@@ -36,13 +38,14 @@ for file in indir[:26]:
     if file[-4:] == '.xml':
         file_count += 1
         print(file_count, file)
-        work_annotator = []
 
         # Open the files (they are XML's) with beautiful soup and search through every word in every sentence.
         xml_file = open(os.path.join(corpora_folder, file), 'r', encoding='utf-8')
         soup = BeautifulSoup(xml_file, 'xml')
+        work_annotator = return_file_annotators(soup)
         sentences = soup.find_all('sentence')
         for sentence in sentences:
+            sentence_annotators = return_sentence_annotators(sentence, short_annotators)
             tokens = sentence.find_all(['word', 'token'])
             for token in tokens:
 

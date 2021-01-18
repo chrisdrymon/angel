@@ -709,7 +709,7 @@
             head="13"/>
       <word id="7" cid="44753291" form="," lemma="punc1" postag="u--------" relation="AuxX"
             head="13"/>
-      <word id="8" cid="44753292" form="̓́Ιππων" relation="SBJ" lemma="̓́Ιππων"
+      <word id="8" cid="44753292" form="Ἴππων" relation="SBJ" lemma="Ἴππων"
             postag="n-s---mn-"
             head="9"/>
       <word id="9" cid="44753293" form="ἔφη" relation="PRED" lemma="φημί"

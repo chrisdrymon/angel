@@ -4422,7 +4422,7 @@
              document_id="urn:cts:greekLit:tlg0081.tlg001.perseus-grc1"
              subdoc="1.13.1"
              span="">
-      <word id="1" form="Π̔ελασγοῦ" lemma="Π̔ελασγός" postag="n-s---mg-" relation="PNOM_CO" head="2"/>
+      <word id="1" form="Πελασγοῦ" lemma="Πελασγός" postag="n-s---mg-" relation="PNOM_CO" head="2"/>
       <word id="2" form="καὶ" lemma="καί" postag="c--------" relation="COORD" head="4"/>
       <word id="3" form="Δηιανείρης" lemma="Δηιάνειρα" postag="n-s---fg-" relation="PNOM_CO" head="2"/>
       <word id="4" form="γίνεται" lemma="γίγνομαι" postag="v3spie---" relation="PRED" head="0"/>
