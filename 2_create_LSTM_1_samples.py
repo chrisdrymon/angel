@@ -3,8 +3,8 @@ from bs4 import BeautifulSoup
 import time
 import json
 import numpy as np
-from utilities_morph import return_sentence_annotators, return_file_annotators
-import greek_normalisation
+from utilities_morph import return_sentence_annotators, return_file_annotators, elision_normalize
+from greek_normalisation.normalise import Normaliser, Norm
 
 corpora_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 indir = os.listdir(corpora_folder)
@@ -32,6 +32,9 @@ degree_tags = ['p', 'c', 's']
 # Change this for each aspect of morphology
 relevant_tagset = pos_tags
 
+# Create the normalizer
+normalise = Normaliser().normalise
+
 # Search through every work in the annotated Greek folder
 for file in indir[:26]:
     if file[-4:] == '.xml':
@@ -57,7 +60,13 @@ for file in indir[:26]:
                 if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False:
                     blank_character_tensor = np.array([0]*137, dtype=np.bool_)
                     token_tensor = np.array([blank_character_tensor]*21, dtype=np.bool_)
+
+                    # Normalize each token before tensorizing its characters.
+                    wordform = normalise(elision_normalize(token['form']))
+
                     token_length = len(token['form'])
+
+
 
                     # Create token tensors for tokens longer than 21 characters
                     if token_length > 21:
@@ -91,4 +100,4 @@ for file in indir[:26]:
                                 character_tensor[136] = 1
                             token_tensor[21-token_length+i] = character_tensor
                     py_samples.append(token_tensor)
-
+samples = np.array(py_samples)
