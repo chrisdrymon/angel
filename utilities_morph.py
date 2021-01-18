@@ -3,6 +3,8 @@ import tensorflow as tf
 from bs4 import BeautifulSoup
 import numpy as np
 import json
+from greek_normalisation.normalise import Normaliser, Norm
+from collections import Counter
 
 
 # Create a custom model saver
@@ -236,5 +238,47 @@ def return_sentence_annotators(sentence, short_annotators):
 
 
 def elision_normalize(s):
+    """Turn 2019ish characters to 2019."""
     return s.replace("\u02BC", "\u2019").replace("\u1FBF", "\u2019").replace("\u0027", "\u2019").\
         replace("\u1FBD", "\u2019")
+
+
+def return_all_normalized_treebank_characters():
+    """Return a list of each unique character which occurs in the treebanks. Prints character counts."""
+    agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
+    gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
+    all_files = []
+    all_characters = []
+    character_count = Counter()
+
+    for file in os.listdir(agdt_folder):
+        all_files.append(os.path.join(agdt_folder, file))
+    for file in os.listdir(gorman_folder):
+        all_files.append(os.path.join(gorman_folder, file))
+    with open(os.path.join('data', 'jsons', 'short_annotators.json'), encoding='utf-8') as json_file:
+        short_annotators = json.load(json_file)
+    with open(os.path.join('data', 'jsons', 'annotators.json'), encoding='utf-8') as json_file:
+        all_annotators = json.load(json_file)
+
+    # Create the normaliser
+    normalise = Normaliser().normalise
+
+    file_count = 0
+    for file in all_files[11:]:
+        if file[-4:] == '.xml':
+            file_count += 1
+            print(file_count, file)
+            xml_file = open(file, 'r', encoding='utf-8')
+            soup = BeautifulSoup(xml_file, 'xml')
+            sentences = soup.find_all('sentence')
+            for sentence in sentences:
+                tokens = sentence.find_all(['word', 'token'])
+                for token in tokens:
+                    if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False:
+                        normalized_form = normalise(elision_normalize(token['form']))
+                        for character in normalized_form[0]:
+                            if character not in all_characters:
+                                all_characters.append(character)
+                                print(f'{character} in {token["form"]}')
+    print(character_count)
+    return all_characters

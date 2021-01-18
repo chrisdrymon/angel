@@ -9,12 +9,11 @@ import greek_normalisation
 corpora_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 indir = os.listdir(corpora_folder)
 file_count = 0
-py_samples = []
 py_labels = []
 
 # Load character list and annotator list
-with open(os.path.join('data', 'jsons', 'all_characters.json'), encoding='utf-8') as json_file:
-    all_characters = json.load(json_file)
+with open(os.path.join('data', 'jsons', 'all_norm_characters.json'), encoding='utf-8') as json_file:
+    all_norm_characters = json.load(json_file)
 with open(os.path.join('data', 'jsons', 'annotators.json'), encoding='utf-8') as json_file:
     annotators = json.load(json_file)
 with open(os.path.join('data', 'jsons', 'short_annotators.json'), encoding='utf-8') as json_file:
@@ -48,25 +47,9 @@ for file in indir[:26]:
             sentence_annotators = return_sentence_annotators(sentence, short_annotators)
             tokens = sentence.find_all(['word', 'token'])
             for token in tokens:
-
-                # Enable this if the search should ignore elliptical tokens
-                # if token.has_attr('artificial') is False and token.has_attr('empty-token-sort') is False:
-                # The longest token is 21 characters. 218 unique characters occur in the unnormalized AGDT corpus.
-                if token.has_attr('form') and token.has_attr('postag'):
-                    blank_character_tensor = np.array([0]*219, dtype=np.bool_)
-                    token_tensor = np.array([blank_character_tensor]*21, dtype=np.bool_)
-                    token_length = len(token['form'])
-                    for i, character in enumerate(token['form']):
-                        character_tensor = np.array([0]*219, dtype=np.bool_)
-                        try:
-                            character_tensor[all_characters.index(character)] = 1
-                        except ValueError:
-                            character_tensor[218] = 1
-                        token_tensor[21-token_length+i] = character_tensor
-                    py_samples.append(token_tensor)
+                if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False:
 
                     # Now create the label tensors.
-                    # Go change save file's name right now.
                     # For each aspect of morphology, refactor this tensor's name.
                     pos_tensor = [0] * (len(relevant_tagset) + 1)
                     try:
@@ -79,15 +62,9 @@ for file in indir[:26]:
                         print(sentence['id'], token['id'], token['form'])
                         pos_tensor[-1] = 1
                     py_labels.append(pos_tensor)
-samples = np.array(py_samples, dtype=np.bool_)
 labels = np.array(py_labels, dtype=np.bool_)
-print(f'Samples: {len(samples)}')
 print(f'Labels: {len(labels)}')
 
-print('Converting to Numpy Arrays. This may take a few minutes...')
-# Split data into an 80%/20% training/validation split.
-split = int(.8*len(labels))
-train_data = np.array(samples[:split], dtype=np.bool_)
-val_data = np.array(samples[split:], dtype=np.bool_)
+print('Converting to Numpy Arrays...')
 train_labels = np.array(labels[:split], dtype=np.bool_)
 val_labels = np.array(labels[split:], dtype=np.bool_)
