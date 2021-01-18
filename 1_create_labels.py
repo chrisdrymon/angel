@@ -26,7 +26,7 @@ case_tags = ['n', 'g', 'd', 'a', 'v']
 degree_tags = ['p', 'c', 's']
 
 # Change this for each aspect of morphology
-relevant_tagset = pos_tags
+relevant_tagset = person_tags
 
 # Search through every work in the annotated Greek folder
 for file in all_files:
@@ -49,7 +49,7 @@ for file in all_files:
                     try:
 
                         # For each aspect of morphology, change the postag position.
-                        pos_tensor[relevant_tagset.index(token['postag'][0])] = 1
+                        pos_tensor[relevant_tagset.index(token['postag'][1])] = 1
                     except IndexError:
                         print(sentence['id'], token['id'], token['form'])
                         pos_tensor[-1] = 1

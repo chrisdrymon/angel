@@ -1,3 +1,5 @@
+# Still need to add annotator tensor
+
 import os
 from bs4 import BeautifulSoup
 import time
@@ -62,16 +64,13 @@ for file in indir[:26]:
                     token_tensor = np.array([blank_character_tensor]*21, dtype=np.bool_)
 
                     # Normalize each token before tensorizing its characters.
-                    wordform = normalise(elision_normalize(token['form']))
-
-                    token_length = len(token['form'])
-
-
+                    normalized_form = normalise(elision_normalize(token['form']))
+                    token_length = len(normalized_form)
 
                     # Create token tensors for tokens longer than 21 characters
                     if token_length > 21:
                         token_tensor = []
-                        for character in token['form'][:10]:
+                        for character in normalized_form[:10]:
                             character_tensor = np.array([0]*137, dtype=np.bool_)
                             try:
                                 character_tensor[all_norm_characters.index(character)] = 1
@@ -81,7 +80,7 @@ for file in indir[:26]:
                         character_tensor = np.array([0]*137, dtype=np.bool_)
                         character_tensor[135] = 1
                         token_tensor.append(character_tensor)
-                        for character in token['form'][-10:]:
+                        for character in normalized_form[-10:]:
                             character_tensor = np.array([0]*137, dtype=np.bool_)
                             try:
                                 character_tensor[all_norm_characters.index(character)] = 1
@@ -92,7 +91,7 @@ for file in indir[:26]:
 
                     # Create token tensors for tokens shorter than 22 characters
                     else:
-                        for i, character in enumerate(token['form']):
+                        for i, character in enumerate(normalized_form):
                             character_tensor = np.array([0]*137, dtype=np.bool_)
                             try:
                                 character_tensor[all_norm_characters.index(character)] = 1
