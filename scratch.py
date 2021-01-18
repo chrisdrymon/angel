@@ -9,7 +9,7 @@ from greek_normalisation.normalise import Normaliser, Norm
 agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 ignore_names = ['arethusa']
-problems = []
+longest = 0
 all_files = []
 all_characters = []
 character_counter = Counter()
@@ -38,12 +38,8 @@ for file in all_files[11:]:
             tokens = sentence.find_all(['word', 'token'])
             for token in tokens:
                 if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False:
-                    normalized_form = normalise(token['form'])
-                    for character in normalized_form[0]:
-                        character_counter[character] += 1
-                        if character not in all_characters:
-                            all_characters.append(character)
-                            print(f'{character} in {token["form"]}')
-print(all_characters)
-with open(os.path.join('data', 'jsons', 'all_norm_characters.json'), 'w', encoding='utf-8') as outfile:
-    json.dump(all_characters, outfile, ensure_ascii=False)
+                    normalized_form = normalise(elision_normalize(token['form']))[0]
+                    if len(normalized_form) > longest:
+                        print(normalized_form, len(normalized_form))
+                        longest = len(normalized_form)
+print(longest)
