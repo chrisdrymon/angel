@@ -10,7 +10,7 @@ from collections import Counter
 # Create a custom model saver
 class ModelSaver(tf.keras.callbacks.Callback):
     """A custom tensorflow model saver that returns useful information"""
-    def __init__(self, morph_title, nn_type, nn_layers, cells):
+    def __init__(self, morph_title, nn_type, nn_layers, cells, corpus_string):
         super().__init__()
         self.best_val_acc = 0
         self.best_epoch = 0
@@ -19,6 +19,7 @@ class ModelSaver(tf.keras.callbacks.Callback):
         self.nn_type = nn_type
         self.nn_layers = nn_layers
         self.cells = cells
+        self.corpus_string = corpus_string
 
     def on_train_begin(self, logs=None):
         self.best_val_acc = 0
@@ -30,7 +31,7 @@ class ModelSaver(tf.keras.callbacks.Callback):
             self.best_val_acc = logs['val_accuracy']
             model_name = os.path.join('models', f'{self.morph_title}-{self.nn_type}-{self.nn_layers}x{self.cells}-'
                                                 f'{logs["accuracy"]:.3f}'
-                                                f'val{logs["val_accuracy"]:.3f}.h5')
+                                                f'val{logs["val_accuracy"]:.3f}-{self.corpus_string}.h5')
             tf.keras.models.save_model(self.model, model_name, save_format='h5')
             self.best_epoch = epoch + 1
             self.new_best = True
