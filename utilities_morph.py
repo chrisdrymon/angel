@@ -228,7 +228,7 @@ def return_file_annotators(soup):
 def return_sentence_annotators(sentence, short_annotators):
     """Return a list of this sentence's annotators"""
     sentence_annotators = []
-    xml_sen_ann = sentence.find_all('annotator', 'primary', 'seconday')
+    xml_sen_ann = sentence.find_all(['annotator', 'primary', 'secondary'])
     for annotator in xml_sen_ann:
         try:
             sentence_annotators.append(short_annotators[annotator.text])

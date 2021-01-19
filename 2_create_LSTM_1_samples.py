@@ -1,17 +1,15 @@
-# Still need to add annotator tensor
-
 import os
 from bs4 import BeautifulSoup
 import time
 import json
 import numpy as np
-from utilities_morph import return_sentence_annotators, return_file_annotators, elision_normalize, create_morph_classes
+from utilities_morph import return_sentence_annotators, return_file_annotators, elision_normalize
 from greek_normalisation.normalise import Normaliser, Norm
 
 agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 all_files = []
-for file in sorted(os.listdir(agdt_folder))[:26]:
+for file in sorted(os.listdir(agdt_folder))[11:]:
     all_files.append(os.path.join(agdt_folder, file))
 # for file in sorted(os.listdir(gorman_folder)):
 #     all_files.append(os.path.join(gorman_folder, file))
@@ -45,6 +43,8 @@ for file in all_files:
 
             # Prepare annotator tensor. There are 36 annotators for Gorman/AGDT.
             sentence_annotators = return_sentence_annotators(sentence, short_annotators)
+            print(sentence_annotators)
+            time.sleep(1)
             if not sentence_annotators:
                 sentence_annotators = work_annotators
             annotator_tensor = [0]*37
@@ -64,7 +64,9 @@ for file in all_files:
                 # character which occurred once in the corpus was erased from the character list and replaced as an
                 # "other" character. 135 characters + 1 elision + 1 other = 137-length tensor.
                 if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False:
-                    blank_character_tensor = np.array([0]*137, dtype=np.bool_)
+                    blank_character_tensor = np.array([0]*174, dtype=np.bool_)
+
+                    # The whole token tensor start out blank because it's challenging to fill out the empty characters.
                     token_tensor = np.array([blank_character_tensor]*21, dtype=np.bool_)
 
                     # Normalize each token before tensorizing its characters.
@@ -87,6 +89,8 @@ for file in all_files:
                             token_tensor.append(character_tensor)
                         character_tensor = [0]*137
                         character_tensor[135] = 1
+
+                        # Append the annotator tensor at the end of every character tensor
                         character_tensor = character_tensor + annotator_tensor
                         character_tensor = np.array(character_tensor, dtype=np.bool_)
                         token_tensor.append(character_tensor)
@@ -96,6 +100,8 @@ for file in all_files:
                                 character_tensor[all_norm_characters.index(character)] = 1
                             except ValueError:
                                 character_tensor[136] = 1
+
+                            # Append the annotator tensor at the end of every character tensor
                             character_tensor = character_tensor + annotator_tensor
                             character_tensor = np.array(character_tensor, dtype=np.bool_)
                             token_tensor.append(character_tensor)
@@ -109,9 +115,15 @@ for file in all_files:
                                 character_tensor[all_norm_characters.index(character)] = 1
                             except ValueError:
                                 character_tensor[136] = 1
+
+                            # Append the annotator tensor at the end of every character tensor
+                            print(len(character_tensor), character_tensor)
+                            character_tensor = character_tensor + annotator_tensor
+                            print(len(character_tensor), character_tensor)
+                            time.sleep(1)
+                            character_tensor = np.array(character_tensor)
                             token_tensor[21-token_length+i] = character_tensor
 
-                    # At the end of every character tensor, append the annotator tensor
-
+                    # Add each tensor token to the samples
                     py_samples.append(token_tensor)
-samples = np.array(py_samples)
+samples = np.array(py_samples, dtype=np.bool_)
