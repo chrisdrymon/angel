@@ -2,6 +2,7 @@ import os
 from bs4 import BeautifulSoup
 import time
 import json
+import pickle
 import numpy as np
 from utilities_morph import return_sentence_annotators, return_file_annotators, elision_normalize
 from greek_normalisation.normalise import Normaliser, Norm
@@ -9,7 +10,7 @@ from greek_normalisation.normalise import Normaliser, Norm
 agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 all_files = []
-for file in sorted(os.listdir(agdt_folder))[11:]:
+for file in sorted(os.listdir(agdt_folder))[-7:]:
     all_files.append(os.path.join(agdt_folder, file))
 # for file in sorted(os.listdir(gorman_folder)):
 #     all_files.append(os.path.join(gorman_folder, file))
@@ -43,8 +44,6 @@ for file in all_files:
 
             # Prepare annotator tensor. There are 36 annotators for Gorman/AGDT.
             sentence_annotators = return_sentence_annotators(sentence, short_annotators)
-            print(sentence_annotators)
-            time.sleep(1)
             if not sentence_annotators:
                 sentence_annotators = work_annotators
             annotator_tensor = [0]*37
@@ -117,13 +116,12 @@ for file in all_files:
                                 character_tensor[136] = 1
 
                             # Append the annotator tensor at the end of every character tensor
-                            print(len(character_tensor), character_tensor)
                             character_tensor = character_tensor + annotator_tensor
-                            print(len(character_tensor), character_tensor)
-                            time.sleep(1)
                             character_tensor = np.array(character_tensor)
                             token_tensor[21-token_length+i] = character_tensor
 
                     # Add each tensor token to the samples
                     py_samples.append(token_tensor)
 samples = np.array(py_samples, dtype=np.bool_)
+with open(os.path.join('data', 'pickles', 'samples.pickle'), 'wb') as outfile:
+    pickle.dump(samples, outfile)
