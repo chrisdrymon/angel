@@ -5,11 +5,17 @@ from bs4 import BeautifulSoup
 import time
 import json
 import numpy as np
-from utilities_morph import return_sentence_annotators, return_file_annotators, elision_normalize
+from utilities_morph import return_sentence_annotators, return_file_annotators, elision_normalize, create_morph_classes
 from greek_normalisation.normalise import Normaliser, Norm
 
-corpora_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
-indir = os.listdir(corpora_folder)
+agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
+gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
+all_files = []
+for file in sorted(os.listdir(agdt_folder))[:26]:
+    all_files.append(os.path.join(agdt_folder, file))
+# for file in sorted(os.listdir(gorman_folder)):
+#     all_files.append(os.path.join(gorman_folder, file))
+
 file_count = 0
 py_samples = []
 
@@ -17,39 +23,37 @@ py_samples = []
 with open(os.path.join('data', 'jsons', 'all_norm_characters.json'), encoding='utf-8') as json_file:
     all_norm_characters = json.load(json_file)
 with open(os.path.join('data', 'jsons', 'annotators.json'), encoding='utf-8') as json_file:
-    annotators = json.load(json_file)
+    all_annotators = json.load(json_file)
 with open(os.path.join('data', 'jsons', 'short_annotators.json'), encoding='utf-8') as json_file:
     short_annotators = json.load(json_file)
-
-pos_tags = ['l', 'n', 'a', 'r', 'c', 'i', 'p', 'v', 'd', 'm', 'g', 'u']
-person_tags = ['1', '2', '3']
-number_tags = ['s', 'p', 'd']
-tense_tags = ['p', 'i', 'r', 'l', 't', 'f', 'a']
-mood_tags = ['i', 's', 'n', 'm', 'p', 'o']
-voice_tags = ['a', 'p', 'm', 'e']
-gender_tags = ['m', 'f', 'n']
-case_tags = ['n', 'g', 'd', 'a', 'v']
-degree_tags = ['p', 'c', 's']
-
-# Change this for each aspect of morphology
-relevant_tagset = pos_tags
 
 # Create the normalizer
 normalise = Normaliser().normalise
 
 # Search through every work in the annotated Greek folder
-for file in indir[:26]:
+for file in all_files:
     if file[-4:] == '.xml':
         file_count += 1
         print(file_count, file)
 
         # Open the files (they are XML's) with beautiful soup and search through every word in every sentence.
-        xml_file = open(os.path.join(corpora_folder, file), 'r', encoding='utf-8')
+        xml_file = open(file, 'r', encoding='utf-8')
         soup = BeautifulSoup(xml_file, 'xml')
-        work_annotator = return_file_annotators(soup)
+        work_annotators = return_file_annotators(soup)
         sentences = soup.find_all('sentence')
         for sentence in sentences:
+
+            # Prepare annotator tensor. There are 36 annotators for Gorman/AGDT.
             sentence_annotators = return_sentence_annotators(sentence, short_annotators)
+            if not sentence_annotators:
+                sentence_annotators = work_annotators
+            annotator_tensor = [0]*37
+            for anno in sentence_annotators:
+                try:
+                    annotator_tensor[all_annotators.index(anno)] = 1
+                except IndexError:
+                    annotator_tensor[-1] = 1
+
             tokens = sentence.find_all(['word', 'token'])
             for token in tokens:
 
@@ -64,39 +68,50 @@ for file in indir[:26]:
                     token_tensor = np.array([blank_character_tensor]*21, dtype=np.bool_)
 
                     # Normalize each token before tensorizing its characters.
-                    normalized_form = normalise(elision_normalize(token['form']))
+                    normalized_form = normalise(elision_normalize(token['form']))[0]
                     token_length = len(normalized_form)
 
                     # Create token tensors for tokens longer than 21 characters
                     if token_length > 21:
                         token_tensor = []
                         for character in normalized_form[:10]:
-                            character_tensor = np.array([0]*137, dtype=np.bool_)
+                            character_tensor = [0]*137
                             try:
                                 character_tensor[all_norm_characters.index(character)] = 1
                             except ValueError:
                                 character_tensor[136] = 1
+
+                            # Append the annotator tensor at the end of every character tensor
+                            character_tensor = character_tensor + annotator_tensor
+                            character_tensor = np.array(character_tensor, dtype=np.bool_)
                             token_tensor.append(character_tensor)
-                        character_tensor = np.array([0]*137, dtype=np.bool_)
+                        character_tensor = [0]*137
                         character_tensor[135] = 1
+                        character_tensor = character_tensor + annotator_tensor
+                        character_tensor = np.array(character_tensor, dtype=np.bool_)
                         token_tensor.append(character_tensor)
                         for character in normalized_form[-10:]:
-                            character_tensor = np.array([0]*137, dtype=np.bool_)
+                            character_tensor = [0]*137
                             try:
                                 character_tensor[all_norm_characters.index(character)] = 1
                             except ValueError:
                                 character_tensor[136] = 1
+                            character_tensor = character_tensor + annotator_tensor
+                            character_tensor = np.array(character_tensor, dtype=np.bool_)
                             token_tensor.append(character_tensor)
                         token_tensor = np.array(token_tensor, dtype=np.bool_)
 
                     # Create token tensors for tokens shorter than 22 characters
                     else:
                         for i, character in enumerate(normalized_form):
-                            character_tensor = np.array([0]*137, dtype=np.bool_)
+                            character_tensor = [0]*137
                             try:
                                 character_tensor[all_norm_characters.index(character)] = 1
                             except ValueError:
                                 character_tensor[136] = 1
                             token_tensor[21-token_length+i] = character_tensor
+
+                    # At the end of every character tensor, append the annotator tensor
+
                     py_samples.append(token_tensor)
 samples = np.array(py_samples)
