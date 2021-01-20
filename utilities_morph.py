@@ -44,32 +44,33 @@ class ModelSaver(tf.keras.callbacks.Callback):
 
 class Morphs:
     """Hold data for one aspect of morphology."""
-    def __init__(self, title, tags, lstm, dnn):
+    def __init__(self, title, tags, lstm1, dnn):
         self.title = title
         self.tags = tags
-        self.lstm = lstm
+        self.lstm1 = lstm1
         self.dnn = dnn
 
 
 def create_morph_classes():
     """Create a class instance for each part of speech aspect."""
-    pos_lstm = tf.keras.models.load_model(os.path.join('models', 'pos-1x64-0.945val0.907-1st5.h5'))
+    pos_lstm1 = tf.keras.models.load_model(os.path.join('models', 'pos-lstm1-3x128-0.927val0.939-AGDTfirst26last7.h5'))
     pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.925val0.914-1st5.h5'))
-    person_lstm = tf.keras.models.load_model(os.path.join('models', 'person-1x64-0.995val0.979-1st5.h5'))
+    person_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                           'person-lstm1-3x128-0.983val0.990-AGDTfirst26last7.h5'))
     person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-1x20-0.998val0.982-1st5.h5'))
-    number_lstm = tf.keras.models.load_model(os.path.join('models', 'number-1x64-0.990val0.967-1st5.h5'))
+    number_lstm1 = tf.keras.models.load_model(os.path.join('models', 'number-1x64-0.990val0.967-1st5.h5'))
     number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970-1st5.h5'))
-    tense_lstm = tf.keras.models.load_model(os.path.join('models', 'tense-1x64-0.996val0.973-1st5.h5'))
+    tense_lstm1 = tf.keras.models.load_model(os.path.join('models', 'tense-1x64-0.996val0.973-1st5.h5'))
     tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-1x20-0.998val0.975-1st5.h5'))
-    mood_lstm = tf.keras.models.load_model(os.path.join('models', 'mood-1x64-0.995val0.978-1st5.h5'))
+    mood_lstm1 = tf.keras.models.load_model(os.path.join('models', 'mood-1x64-0.995val0.978-1st5.h5'))
     mood_dnn = tf.keras.models.load_model(os.path.join('models', 'mood-dnn-1x20-0.998val0.979-1st5.h5'))
-    voice_lstm = tf.keras.models.load_model(os.path.join('models', 'voice-1x64-0.996val0.977-1st5.h5'))
+    voice_lstm1 = tf.keras.models.load_model(os.path.join('models', 'voice-1x64-0.996val0.977-1st5.h5'))
     voice_dnn = tf.keras.models.load_model(os.path.join('models', 'voice-dnn-1x20-0.998val0.979-1st5.h5'))
-    gender_lstm = tf.keras.models.load_model(os.path.join('models', 'gender-1x64-0.962val0.909-1st5.h5'))
+    gender_lstm1 = tf.keras.models.load_model(os.path.join('models', 'gender-1x64-0.962val0.909-1st5.h5'))
     gender_dnn = tf.keras.models.load_model(os.path.join('models', 'gender-dnn-1x20-0.967val0.912-1st5.h5'))
-    case_lstm = tf.keras.models.load_model(os.path.join('models', 'case-1x64-0.977val0.934-1st5.h5'))
+    case_lstm1 = tf.keras.models.load_model(os.path.join('models', 'case-1x64-0.977val0.934-1st5.h5'))
     case_dnn = tf.keras.models.load_model(os.path.join('models', 'case-dnn-1x20-0.981val0.937-1st5.h5'))
-    degree_lstm = tf.keras.models.load_model(os.path.join('models', 'degree-1x64-0.999val0.999-1st5.h5'))
+    degree_lstm1 = tf.keras.models.load_model(os.path.join('models', 'degree-1x64-0.999val0.999-1st5.h5'))
     degree_dnn = tf.keras.models.load_model(os.path.join('models', 'degree-dnn-1x20-0.999val0.999-1st5.h5'))
 
     # The possible tags for each item of morphology
@@ -84,77 +85,17 @@ def create_morph_classes():
     degree_tags = ('p', 'c', 's')
 
     # Create a class instance for each aspect of morphology
-    pos = Morphs('pos', pos_tags, pos_lstm, pos_dnn)
-    person = Morphs('person', person_tags, person_lstm, person_dnn)
-    number = Morphs('number', number_tags, number_lstm, number_dnn)
-    tense = Morphs('tense', tense_tags, tense_lstm, tense_dnn)
-    mood = Morphs('mood', mood_tags, mood_lstm, mood_dnn)
-    voice = Morphs('voice', voice_tags, voice_lstm, voice_dnn)
-    gender = Morphs('gender', gender_tags, gender_lstm, gender_dnn)
-    case = Morphs('case', case_tags, case_lstm, case_dnn)
-    degree = Morphs('degree', degree_tags, degree_lstm, degree_dnn)
+    pos = Morphs('pos', pos_tags, pos_lstm1, pos_dnn)
+    person = Morphs('person', person_tags, person_lstm1, person_dnn)
+    number = Morphs('number', number_tags, number_lstm1, number_dnn)
+    tense = Morphs('tense', tense_tags, tense_lstm1, tense_dnn)
+    mood = Morphs('mood', mood_tags, mood_lstm1, mood_dnn)
+    voice = Morphs('voice', voice_tags, voice_lstm1, voice_dnn)
+    gender = Morphs('gender', gender_tags, gender_lstm1, gender_dnn)
+    case = Morphs('case', case_tags, case_lstm1, case_dnn)
+    degree = Morphs('degree', degree_tags, degree_lstm1, degree_dnn)
 
     return pos, person, number, tense, mood, voice, gender, case, degree
-
-
-def create_samples_and_labels(morphs, corpora_size):
-    """Return samples and labels. Focused on individual morphs, not training everything."""
-    corpora_folder = os.path.join('corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
-    with open(os.path.join('jsons', 'all_characters.json'), encoding='utf-8') as json_file:
-        all_characters = json.load(json_file)
-    if isinstance(corpora_size, int):
-        indir = os.listdir(corpora_folder)[:corpora_size]
-    else:
-        indir = os.listdir(corpora_folder)
-    file_count = 0
-    # Search through every work in the annotated Greek folder
-    for file in indir:
-        if file[-4:] == '.xml':
-            file_count += 1
-            print(file_count, file)
-            for morph in morphs:
-                morph.correct_prediction_count = 0
-                morph.labels = []
-
-            # A list to hold the token tensors
-            samples = []
-            token_count = 0
-
-            # Open the files (they are XML's) with beautiful soup and search through every word in every sentence.
-            xml_file = open(os.path.join(corpora_folder, file), 'r', encoding='utf-8')
-            soup = BeautifulSoup(xml_file, 'xml')
-            sentences = soup.find_all('sentence')
-            for sentence in sentences:
-                tokens = sentence.find_all(['word', 'token'])
-                for token in tokens:
-                    if token.has_attr('form') and token.has_attr('postag'):
-
-                        # In the AGDT corpus, 218 unique characters occur. Hence the size of the character tensor.
-                        blank_character_tensor = np.array([0] * 219, dtype=np.bool_)
-
-                        # The longest word in the AGDT corpus is 21 characters long
-                        wordform_tensor = np.array([blank_character_tensor] * 21, dtype=np.bool_)
-                        wordform_length = len(token['form'])
-
-                        # For each character in the token, create a one-hot tensor
-                        for i, character in enumerate(token['form']):
-                            character_tensor = np.array([0] * 219, dtype=np.bool_)
-                            try:
-                                character_tensor[all_characters.index(character)] = 1
-                            except ValueError:
-                                character_tensor[218] = 1
-                            wordform_tensor[21 - wordform_length + i] = character_tensor
-
-                        # This tensor collects all the wordform tensors
-                        samples.append(wordform_tensor)
-
-                        # Creates a labels tensor to check predictions against
-                        for i, morph in enumerate(morphs):
-                            try:
-                                morph.labels.append(token['postag'][i])
-                            except IndexError:
-                                morph.labels.append('-')
-    return morphs
 
 
 def return_all_treebank_annotators():
@@ -239,7 +180,7 @@ def return_sentence_annotators(sentence, short_annotators):
 
 
 def elision_normalize(s):
-    """Turn 2019ish characters to 2019."""
+    """Turn unicode characters which look similar to 2019 into 2019."""
     return s.replace("\u02BC", "\u2019").replace("\u1FBF", "\u2019").replace("\u0027", "\u2019").\
         replace("\u1FBD", "\u2019")
 
