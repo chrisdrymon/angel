@@ -40,13 +40,17 @@ cells = 128
 # Enter the samples and labels into Tensorflow to train a neural network
 print('Creating neural network...')
 model = tf.keras.Sequential()
-if nn_layers > 1:
+
+# Create the model layers.
+layers_left = nn_layers
+if layers_left > 1:
     model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3, return_sequences=True),
                                    input_shape=(21, 174)))
-    more_layers = nn_layers - 1
-    while more_layers >= 1:
-        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3)))
-        more_layers -= 1
+    layers_left -= 1
+    while layers_left > 1:
+        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3, return_sequences=True)))
+        layers_left -= 1
+    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3)))
 else:
     model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3), input_shape=(21, 174)))
 model.add(layers.Dense(len(relevant_morph.tags) + 1, activation='softmax'))

@@ -23,7 +23,13 @@ with open(os.path.join('data', 'pickles', 'samples-AGDT-first26.pickle'), 'rb') 
 with open(os.path.join('data', 'pickles', 'samples-AGDT-last7.pickle'), 'rb') as outfile:
     val_data = pickle.load(outfile)
 
-for aspect in morphs:
+# Change these settings as needed. Corpus string is used in file naming.
+corpus_string = 'AGDTfirst26last7'
+nn_type = 'lstm1'
+nn_layers = 3
+cells = 128
+
+for aspect in morphs[-1:]:
 
     # Load the datasets
     print('Loading labels...')
@@ -37,26 +43,26 @@ for aspect in morphs:
     train_labels = np.array(train_labels, dtype=np.bool_)
     val_labels = np.array(val_labels, dtype=np.bool_)
 
-    # Check these settings
-    corpus_string = 'AGDTfirst26last7'
-    nn_type = 'lstm1'
-    nn_layers = 2
-    cells = 128
-
     # Enter the samples and labels into Tensorflow to train a neural network
-    print('Creating neural network...')
+    print(f'Creating neural network to predict {aspect.title}...')
     model = tf.keras.Sequential()
-    if nn_layers > 1:
+
+    layers_left = nn_layers
+
+    # Create the model layers.
+    if layers_left > 1:
         model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3, return_sequences=True),
                                        input_shape=(21, 174)))
-        more_layers = nn_layers - 1
-        while more_layers >= 1:
-            model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3)))
-            more_layers -= 1
+        layers_left -= 1
+        while layers_left > 1:
+            model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3, return_sequences=True)))
+            layers_left -= 1
+        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3)))
     else:
         model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3), input_shape=(21, 174)))
     model.add(layers.Dense(len(aspect.tags) + 1, activation='softmax'))
 
+    # Create the model saver instance
     modelSaver = ModelSaver(aspect.title, nn_type, nn_layers, cells, corpus_string)
 
     model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
