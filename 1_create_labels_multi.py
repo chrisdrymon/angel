@@ -8,7 +8,7 @@ from utilities_morph import create_morph_classes
 agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 all_files = []
-for file in sorted(os.listdir(agdt_folder))[7:]:
+for file in sorted(os.listdir(agdt_folder))[-7:]:
     all_files.append(os.path.join(agdt_folder, file))
 # for file in sorted(os.listdir(gorman_folder)):
 #     all_files.append(os.path.join(gorman_folder, file))
