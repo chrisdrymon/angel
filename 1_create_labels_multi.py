@@ -8,19 +8,19 @@ from utilities_morph import create_morph_classes
 agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 all_files = []
-for file in sorted(os.listdir(agdt_folder))[:26]:
+for file in sorted(os.listdir(agdt_folder))[7:]:
     all_files.append(os.path.join(agdt_folder, file))
-for file in sorted(os.listdir(gorman_folder)):
-    all_files.append(os.path.join(gorman_folder, file))
+# for file in sorted(os.listdir(gorman_folder)):
+#     all_files.append(os.path.join(gorman_folder, file))
 
 # Create morphology aspect classes to simplify tensor sizing and file naming. Keep them in this order.
 pos, person, number, tense, mood, voice, gender, case, degree = create_morph_classes()
 morphs = (pos, person, number, tense, mood, voice, gender, case, degree)
 
 # This is just a string that is used in the filename to be saved.
-corpus_set = 'first26-gorman'
+corpus_set = 'AGDT-last7'
 
-for relevant_morph in morphs[5:]:
+for relevant_morph in morphs[2:]:
     print(f'Creating {relevant_morph.title} labels...')
 
     # Reset the count and labels list for each aspect of morphology
