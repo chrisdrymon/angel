@@ -8,23 +8,23 @@ from utilities_morph import create_morph_classes
 agdt_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'perseus-771dca2', 'texts')
 gorman_folder = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 all_files = []
-for file in sorted(os.listdir(agdt_folder))[-7:]:
+for file in sorted(os.listdir(agdt_folder))[:26]:
     all_files.append(os.path.join(agdt_folder, file))
-# for file in sorted(os.listdir(gorman_folder)):
-#     all_files.append(os.path.join(gorman_folder, file))
+for file in sorted(os.listdir(gorman_folder)):
+    all_files.append(os.path.join(gorman_folder, file))
 
 file_count = 0
 py_labels = []
 
-# Create morphology aspect classes to simplify tensor sizing and file naming.
+# Create morphology aspect classes to simplify tensor sizing and file naming. Keep them in this order.
 pos, person, number, tense, mood, voice, gender, case, degree = create_morph_classes()
 morphs = (pos, person, number, tense, mood, voice, gender, case, degree)
 
 # Change this to whichever aspect of morphology labels are needed for.
-relevant_morph = degree
+relevant_morph = mood
 
 # This is just a string that is used in the filename to be saved.
-corpus_set = 'last7'
+corpus_set = 'first26-gorman'
 
 # Search through every work in the annotated Greek folder
 for file in all_files:
@@ -44,7 +44,8 @@ for file in all_files:
                     # Now create the label tensors.
                     morph_aspect_tensor = [0] * (len(relevant_morph.tags) + 1)
                     try:
-                        morph_aspect_tensor[relevant_morph.tags.index(token['postag'][1])] = 1
+                        morph_aspect_tensor[relevant_morph.tags.index(token['postag']
+                                                                      [morphs.index(relevant_morph)])] = 1
                     except IndexError:
                         print(sentence['id'], token['id'], token['form'])
                         morph_aspect_tensor[-1] = 1
