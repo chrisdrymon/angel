@@ -29,7 +29,7 @@ nn_type = 'lstm1'
 nn_layers = 3
 cells = 128
 
-for aspect in morphs[3:]:
+for aspect in morphs:
 
     # Load the datasets
     print('Loading labels...')

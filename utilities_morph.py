@@ -58,19 +58,25 @@ def create_morph_classes():
     person_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                            'person-lstm1-3x128-0.983val0.990-AGDTfirst26last7.h5'))
     person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-1x20-0.998val0.982-1st5.h5'))
-    number_lstm1 = tf.keras.models.load_model(os.path.join('models', 'number-1x64-0.990val0.967-1st5.h5'))
+    number_lstm1 = tf.keras.models.load_model(os.path.join('models', 'number-3x128-0.955val0.980-AGDTfirst26last7.h5'))
     number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970-1st5.h5'))
-    tense_lstm1 = tf.keras.models.load_model(os.path.join('models', 'tense-1x64-0.996val0.973-1st5.h5'))
+    tense_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                          'tense-lstm1-3x128-0.976val0.990-AGDTfirst26last7.h5'))
     tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-1x20-0.998val0.975-1st5.h5'))
-    mood_lstm1 = tf.keras.models.load_model(os.path.join('models', 'mood-1x64-0.995val0.978-1st5.h5'))
+    mood_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                         'mood-lstm1-3x128-0.981val0.992-AGDTfirst26last7.h5'))
     mood_dnn = tf.keras.models.load_model(os.path.join('models', 'mood-dnn-1x20-0.998val0.979-1st5.h5'))
-    voice_lstm1 = tf.keras.models.load_model(os.path.join('models', 'voice-1x64-0.996val0.977-1st5.h5'))
+    voice_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                          'voice-lstm1-3x128-0.978val0.991-AGDTfirst26last7.h5'))
     voice_dnn = tf.keras.models.load_model(os.path.join('models', 'voice-dnn-1x20-0.998val0.979-1st5.h5'))
-    gender_lstm1 = tf.keras.models.load_model(os.path.join('models', 'gender-1x64-0.962val0.909-1st5.h5'))
+    gender_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                           'gender-lstm1-3x128-0.923val0.934-AGDTfirst26last7.h5'))
     gender_dnn = tf.keras.models.load_model(os.path.join('models', 'gender-dnn-1x20-0.967val0.912-1st5.h5'))
-    case_lstm1 = tf.keras.models.load_model(os.path.join('models', 'case-1x64-0.977val0.934-1st5.h5'))
+    case_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                         'case-lstm1-3x128-0.934val0.962-AGDTfirst26last7.h5'))
     case_dnn = tf.keras.models.load_model(os.path.join('models', 'case-dnn-1x20-0.981val0.937-1st5.h5'))
-    degree_lstm1 = tf.keras.models.load_model(os.path.join('models', 'degree-1x64-0.999val0.999-1st5.h5'))
+    degree_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                           'degree-lstm1-3x128-0.998val0.999-AGDTfirst26last7.h5'))
     degree_dnn = tf.keras.models.load_model(os.path.join('models', 'degree-dnn-1x20-0.999val0.999-1st5.h5'))
 
     # The possible tags for each item of morphology
