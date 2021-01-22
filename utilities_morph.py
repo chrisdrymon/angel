@@ -5,6 +5,8 @@ import numpy as np
 import json
 from greek_normalisation.normalise import Normaliser, Norm
 from collections import Counter
+from gensim.models import Word2Vec
+from gensim.models import KeyedVectors
 
 
 # Create a custom model saver
@@ -54,31 +56,31 @@ class Morphs:
 def create_morph_classes():
     """Create a class instance for each part of speech aspect."""
     pos_lstm1 = tf.keras.models.load_model(os.path.join('models', 'pos-lstm1-3x128-0.927val0.939-AGDTfirst26last7.h5'))
-    pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-1x20-0.925val0.914-1st5.h5'))
+    pos_dnn = tf.keras.models.load_model(os.path.join('models', 'pos-dnn-2x20-0.939val0.942-AGDTfirst26last7.h5'))
     person_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                            'person-lstm1-3x128-0.983val0.990-AGDTfirst26last7.h5'))
-    person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-1x20-0.998val0.982-1st5.h5'))
+    person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-2x20-0.994val0.992-AGDTfirst26last7.h5'))
     number_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                            'number-lstm1-3x128-0.955val0.980-AGDTfirst26last7.h5'))
-    number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970-1st5.h5'))
+    number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-2x20-0.977val0.981-1st5.h5'))
     tense_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                           'tense-lstm1-3x128-0.976val0.990-AGDTfirst26last7.h5'))
-    tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-1x20-0.998val0.975-1st5.h5'))
+    tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-2x20-0.990val0.992-AGDTfirst26last7.h5'))
     mood_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                          'mood-lstm1-3x128-0.981val0.992-AGDTfirst26last7.h5'))
-    mood_dnn = tf.keras.models.load_model(os.path.join('models', 'mood-dnn-1x20-0.998val0.979-1st5.h5'))
+    mood_dnn = tf.keras.models.load_model(os.path.join('models', 'mood-dnn-2x20-0.994val0.992-AGDTfirst26last7.h5'))
     voice_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                           'voice-lstm1-3x128-0.978val0.991-AGDTfirst26last7.h5'))
-    voice_dnn = tf.keras.models.load_model(os.path.join('models', 'voice-dnn-1x20-0.998val0.979-1st5.h5'))
+    voice_dnn = tf.keras.models.load_model(os.path.join('models', 'voice-dnn-2x20-0.992val0.993-AGDTfirst26last7.h5'))
     gender_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                            'gender-lstm1-3x128-0.923val0.934-AGDTfirst26last7.h5'))
-    gender_dnn = tf.keras.models.load_model(os.path.join('models', 'gender-dnn-1x20-0.967val0.912-1st5.h5'))
+    gender_dnn = tf.keras.models.load_model(os.path.join('models', 'gender-dnn-2x20-0.952val0.937-AGDTfirst26last7.h5'))
     case_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                          'case-lstm1-3x128-0.934val0.962-AGDTfirst26last7.h5'))
-    case_dnn = tf.keras.models.load_model(os.path.join('models', 'case-dnn-1x20-0.981val0.937-1st5.h5'))
+    case_dnn = tf.keras.models.load_model(os.path.join('models', 'case-dnn-2x20-0.957val0.963-AGDTfirst26last7.h5'))
     degree_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                            'degree-lstm1-3x128-0.998val0.999-AGDTfirst26last7.h5'))
-    degree_dnn = tf.keras.models.load_model(os.path.join('models', 'degree-dnn-1x20-0.999val0.999-1st5.h5'))
+    degree_dnn = tf.keras.models.load_model(os.path.join('models', 'degree-dnn-2x20-0.999val0.999-AGDTfirst26last7.h5'))
 
     # The possible tags for each item of morphology
     pos_tags = ('l', 'n', 'a', 'r', 'c', 'i', 'p', 'v', 'd', 'm', 'g', 'u')
@@ -231,3 +233,10 @@ def return_all_normalized_treebank_characters():
                                 print(f'{character} in {token["form"]}')
     print(character_count)
     return all_characters
+
+
+def return_similar_words(one_word):
+    """Return a list of words which Word2Vec finds similar to the input."""
+    wv = KeyedVectors.load('models/word2vec.wordvectors')
+    normalise = Normaliser().normalise
+    return wv.most_similar(normalise(elision_normalize(one_word))[0])

@@ -4,7 +4,7 @@ import pickle
 import numpy as np
 from utilities_morph import create_morph_classes, ModelSaver
 
-# I've had to split this into two parts because of memory issues.
+# I've had to split this into two parts because of crashes. I suspect tensorflow instances were getting crossed up.
 dnn_samples = []
 
 # Load the datasets
