@@ -19,6 +19,7 @@ for aspect in morphs:
 dnn_samples = []
 i = 0
 
+print('Concatenating outputs of LSTM1 and annotator data...')
 while i < len(pos.lstm1_output):
     one_sample = np.concatenate((pos.lstm1_output[i], person.lstm1_output[i], number.lstm1_output[i],
                                  tense.lstm1_output[i], mood.lstm1_output[i], voice.lstm1_output[i],
@@ -29,5 +30,7 @@ while i < len(pos.lstm1_output):
 
 dnn_samples = np.array(dnn_samples)
 print(f'DNN Samples shape: {dnn_samples.shape}')
-with open(os.path.join('data', 'pickles', f'samples-DNN-{corpus_string}.pickle'), 'wb') as outfile:
+new_file = f'samples-DNN-{corpus_string}.pickle'
+with open(os.path.join('data', 'pickles', new_file), 'wb') as outfile:
     pickle.dump(dnn_samples, outfile)
+print(f'Wrote {new_file} to disk.')
