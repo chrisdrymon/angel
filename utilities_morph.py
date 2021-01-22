@@ -4,9 +4,8 @@ from bs4 import BeautifulSoup
 import numpy as np
 import json
 from greek_normalisation.normalise import Normaliser, Norm
-from collections import Counter
-from gensim.models import Word2Vec
 from gensim.models import KeyedVectors
+from collections import Counter
 
 
 # Create a custom model saver
@@ -62,7 +61,7 @@ def create_morph_classes():
     person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-2x20-0.994val0.992-AGDTfirst26last7.h5'))
     number_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                            'number-lstm1-3x128-0.955val0.980-AGDTfirst26last7.h5'))
-    number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-2x20-0.977val0.981-1st5.h5'))
+    number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-2x20-0.977val0.981-AGDTfirst26last7.h5'))
     tense_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                           'tense-lstm1-3x128-0.976val0.990-AGDTfirst26last7.h5'))
     tense_dnn = tf.keras.models.load_model(os.path.join('models', 'tense-dnn-2x20-0.990val0.992-AGDTfirst26last7.h5'))
@@ -240,3 +239,10 @@ def return_similar_words(one_word):
     wv = KeyedVectors.load('models/word2vec.wordvectors')
     normalise = Normaliser().normalise
     return wv.most_similar(normalise(elision_normalize(one_word))[0])
+
+
+def remove_greek_punctuation(word):
+    """Return the Greek input without punctuation."""
+    return word.replace(',', '').replace('·', '').replace(';', '').replace('.', '').replace('?', '').replace('»', '').\
+        replace('«', '').replace('“', '').replace('„', '')
+
