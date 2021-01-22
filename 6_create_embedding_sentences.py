@@ -16,14 +16,20 @@ normalise = Normaliser().normalise
 
 all_sentences = []
 file_count = 1
+replacement_count = 0
 for file in sorted(os.listdir(text_folder))[2:]:
     print(file_count, file)
     with open(os.path.join(text_folder, file), 'r', encoding='utf-8') as infile:
         current_text = infile.read()
-        normalized_form = normalise(elision_normalize(current_text))[0]
-        for greek_sentence in sent_tokenizer.tokenize(normalized_form):
-            all_sentences.append(greek_sentence.split())
-    print(f'Total sentences: {len(all_sentences)}')
+        for greek_sentence in sent_tokenizer.tokenize(current_text):
+            new_sentence = []
+            for word in greek_sentence.split():
+                word = word.replace(',', '').replace('·', '').replace(';', '').replace('.', '').replace('?', '')
+                normalized_form = normalise(elision_normalize(word))[0]
+                new_sentence.append(normalized_form)
+            print(new_sentence)
+            all_sentences.append(new_sentence)
+    print(f'{len(all_sentences)} total sentences.')
     file_count += 1
 
 with open(os.path.join('data', 'jsons', 'greek_sentences.json'), 'w', encoding='utf-8') as outfile:
