@@ -16,18 +16,23 @@ normalise = Normaliser().normalise
 
 all_sentences = []
 file_count = 1
-replacement_count = 0
 for file in sorted(os.listdir(text_folder))[2:]:
     print(file_count, file)
     with open(os.path.join(text_folder, file), 'r', encoding='utf-8') as infile:
         current_text = infile.read()
+
+        # Split the text into sentences
         for greek_sentence in sent_tokenizer.tokenize(current_text):
             new_sentence = []
+
+            # For each word in the sentence, remove punctuation and normalise its spelling.
             for word in greek_sentence.split():
-                word = word.replace(',', '').replace('·', '').replace(';', '').replace('.', '').replace('?', '')
+                word = word.replace(',', '').replace('·', '').replace(';', '').replace('.', '').replace('?', '').\
+                    replace('»', '').replace('«', '')
                 normalized_form = normalise(elision_normalize(word))[0]
                 new_sentence.append(normalized_form)
-            print(new_sentence)
+
+            # Each sentence needs to be saved as a list of word.
             all_sentences.append(new_sentence)
     print(f'{len(all_sentences)} total sentences.')
     file_count += 1
