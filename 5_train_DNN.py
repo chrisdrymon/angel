@@ -27,7 +27,7 @@ print('Creating morphology classes...')
 pos, person, number, tense, mood, voice, gender, case, degree = create_morph_classes()
 morphs = (pos, person, number, tense, mood, voice, gender, case, degree)
 
-for aspect in morphs:
+for aspect in morphs[1:]:
 
     # Appropriate label data needs to be loaded for each aspect of morphology
     print(f'Loading {aspect.title} labels...')
