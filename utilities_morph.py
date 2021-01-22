@@ -58,7 +58,8 @@ def create_morph_classes():
     person_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                            'person-lstm1-3x128-0.983val0.990-AGDTfirst26last7.h5'))
     person_dnn = tf.keras.models.load_model(os.path.join('models', 'person-dnn-1x20-0.998val0.982-1st5.h5'))
-    number_lstm1 = tf.keras.models.load_model(os.path.join('models', 'number-3x128-0.955val0.980-AGDTfirst26last7.h5'))
+    number_lstm1 = tf.keras.models.load_model(os.path.join('models',
+                                                           'number-lstm1-3x128-0.955val0.980-AGDTfirst26last7.h5'))
     number_dnn = tf.keras.models.load_model(os.path.join('models', 'number-dnn-1x20-0.992val0.970-1st5.h5'))
     tense_lstm1 = tf.keras.models.load_model(os.path.join('models',
                                                           'tense-lstm1-3x128-0.976val0.990-AGDTfirst26last7.h5'))
