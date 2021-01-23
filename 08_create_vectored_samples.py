@@ -16,7 +16,7 @@ blank_vector = np.array([0]*100)
 
 # This is just a string that is used in the filename to be saved. Match it with the sorted list indices.
 corpus_set = 'AGDT-first26'
-for file in sorted(os.listdir(agdt_folder))[:26]:
+for file in sorted(os.listdir(agdt_folder))[-7:]:
     all_files.append(os.path.join(agdt_folder, file))
 # for file in sorted(os.listdir(gorman_folder)):
 #     all_files.append(os.path.join(gorman_folder, file))
