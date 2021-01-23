@@ -42,13 +42,21 @@ for file in all_files:
             tokens = sentence.find_all(['word', 'token'])
             for token in tokens:
                 if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False:
+                    wordform = token['form']
+                    period_tensor = [0]
+
+                    # Create a feature for periods
+                    if wordform == '.':
+                        period_tensor = [1]
 
                     # Look up word embeddings for the wordform
                     try:
-                        vectors.append(wv[normalise(elision_normalize(token['form']))[0]])
+                        full_vec = np.concatenate((wv[normalise(elision_normalize(token['form']))[0]], period_tensor),
+                                                  axis=0)
                     except KeyError:
-                        vectors.append(blank_vector)
+                        full_vec = np.concatenate((blank_vector, period_tensor), axis=0)
+                    vectors.append(full_vec)
 np_vectors = np.array(vectors)
-with open(os.path.join('data', 'pickles', f'vectors-{corpus_set}.pickle'), 'wb') as outfile:
+with open(os.path.join('data', 'pickles', f'vectors-{corpus_set}-periods.pickle'), 'wb') as outfile:
     pickle.dump(np_vectors, outfile)
 print(np_vectors.shape)

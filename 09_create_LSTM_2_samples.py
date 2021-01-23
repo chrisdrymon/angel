@@ -2,8 +2,6 @@ import os
 import time
 import json
 import pickle
-import tensorflow as tf
-from tensorflow.keras import layers
 import numpy as np
 from utilities_morph import create_morph_classes, ModelSaver
 

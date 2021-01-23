@@ -56,7 +56,7 @@ padded_val_labels = np.concatenate((start_label_padding, val_labels), axis=0)
 
 print('Constructing data generators...')
 train_gen = tf.keras.preprocessing.sequence.TimeseriesGenerator(padded_train_data, padded_train_labels, 15,
-                                                                sampling_rate=1)
+                                                                sampling_rate=1, shuffle=True)
 val_gen = tf.keras.preprocessing.sequence.TimeseriesGenerator(padded_val_data, padded_val_labels, 15, sampling_rate=1)
 
 # Check these settings
@@ -73,18 +73,18 @@ model = tf.keras.Sequential()
 # Create the model according to the number of layers chosen above.
 layers_left = nn_layers
 if layers_left > 1:
-    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3, return_sequences=True),
+    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45, return_sequences=True),
                                    input_shape=(15, 192)))
     layers_left -= 1
     while layers_left > 1:
-        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3, return_sequences=True)))
+        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45, return_sequences=True)))
         layers_left -= 1
-    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3)))
+    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45)))
 else:
-    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.3), input_shape=(15, 192)))
+    model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45), input_shape=(15, 192)))
 model.add(layers.Dense(len(relevant_morph.tags) + 1, activation='softmax'))
 
 modelSaver = ModelSaver(relevant_morph.title, nn_type, nn_layers, cells, corpus_string)
 
 model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
-model.fit(train_gen, epochs=40, validation_data=val_gen, verbose=2, callbacks=[modelSaver])
+model.fit(train_gen, epochs=80, validation_data=val_gen, verbose=2, callbacks=[modelSaver])
