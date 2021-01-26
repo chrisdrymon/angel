@@ -29,41 +29,50 @@ class Morphs:
 
 def create_morph_classes():
     """Create a class instance for each part of speech aspect."""
+    print('Part-of-speech models loading...')
     pos_lstm1 = load_model(os.path.join('models', 'pos-lstm1-3x128-0.927val0.939-AGDTfirst26last7.h5'))
     pos_dnn = load_model(os.path.join('models', 'pos-dnn-2x20-0.939val0.942-AGDTfirst26last7.h5'))
-    pos_lstm2 = load_model(os.path.join('models', 'pos-lstm2-3x128-0.963val0.950-AGDTfirst26last7.h5'))
+    pos_lstm2 = load_model(os.path.join('models', 'pos-lstm2-3x128-0.958val0.955-AGDTfirst26last7.h5'))
 
+    print('Person models loading...')
     person_lstm1 = load_model(os.path.join('models', 'person-lstm1-3x128-0.983val0.990-AGDTfirst26last7.h5'))
     person_dnn = load_model(os.path.join('models', 'person-dnn-2x20-0.994val0.992-AGDTfirst26last7.h5'))
-    person_lstm2 = load_model(os.path.join('models', 'person-lstm2-3x128-0.995val0.994-AGDTfirst26last7.h5'))
+    person_lstm2 = load_model(os.path.join('models', 'person-lstm2-3x128-0.994val0.994-AGDTfirst26last7.h5'))
 
+    print('Number models loading...')
     number_lstm1 = load_model(os.path.join('models', 'number-lstm1-3x128-0.955val0.980-AGDTfirst26last7.h5'))
     number_dnn = load_model(os.path.join('models', 'number-dnn-2x20-0.977val0.981-AGDTfirst26last7.h5'))
-    number_lstm2 = load_model(os.path.join('models', 'number-lstm2-3x128-0.983val0.988-AGDTfirst26last7.h5'))
+    number_lstm2 = load_model(os.path.join('models', 'number-lstm2-3x128-0.985val0.987-AGDTfirst26last7.h5'))
 
+    print('Tense models loading...')
     tense_lstm1 = load_model(os.path.join('models', 'tense-lstm1-3x128-0.976val0.990-AGDTfirst26last7.h5'))
     tense_dnn = load_model(os.path.join('models', 'tense-dnn-2x20-0.990val0.992-AGDTfirst26last7.h5'))
-    tense_lstm2 = load_model(os.path.join('models', 'tense-lstm2-3x128-0.984val0.992-AGDTfirst26last7.h5'))
+    tense_lstm2 = load_model(os.path.join('models', 'tense-lstm2-3x128-0.986val0.992-AGDTfirst26last7.h5'))
 
+    print('Mood models loading...')
     mood_lstm1 = load_model(os.path.join('models', 'mood-lstm1-3x128-0.981val0.992-AGDTfirst26last7.h5'))
     mood_dnn = load_model(os.path.join('models', 'mood-dnn-2x20-0.994val0.992-AGDTfirst26last7.h5'))
-    mood_lstm2 = load_model(os.path.join('models', 'mood-lstm2-3x128-0.994val0.995-AGDTfirst26last7.h5'))
+    mood_lstm2 = load_model(os.path.join('models', 'mood-lstm2-3x128-0.993val0.994-AGDTfirst26last7.h5'))
 
+    print('Voice models loading...')
     voice_lstm1 = load_model(os.path.join('models', 'voice-lstm1-3x128-0.978val0.991-AGDTfirst26last7.h5'))
     voice_dnn = load_model(os.path.join('models', 'voice-dnn-2x20-0.992val0.993-AGDTfirst26last7.h5'))
-    voice_lstm2 = load_model(os.path.join('models', 'voice-lstm2-3x128-0.984val0.993-AGDTfirst26last7.h5'))
+    voice_lstm2 = load_model(os.path.join('models', 'voice-lstm2-3x128-'))
 
+    print('Gender models loading...')
     gender_lstm1 = load_model(os.path.join('models', 'gender-lstm1-3x128-0.923val0.934-AGDTfirst26last7.h5'))
     gender_dnn = load_model(os.path.join('models', 'gender-dnn-2x20-0.952val0.937-AGDTfirst26last7.h5'))
-    gender_lstm2 = load_model(os.path.join('models', 'gender-lstm2-3x128-0.960val0.960-AGDTfirst26last7.h5'))
+    gender_lstm2 = load_model(os.path.join('models', 'gender-lstm2-3x128-'))
 
+    print('Case models loading...')
     case_lstm1 = load_model(os.path.join('models', 'case-lstm1-3x128-0.934val0.962-AGDTfirst26last7.h5'))
     case_dnn = load_model(os.path.join('models', 'case-dnn-2x20-0.957val0.963-AGDTfirst26last7.h5'))
-    case_lstm2 = load_model(os.path.join('models', 'case-lstm2-3x128-0.975val0.979-AGDTfirst26last7.h5'))
+    case_lstm2 = load_model(os.path.join('models', 'case-lstm2-3x128-'))
 
+    print('Degree models loading...')
     degree_lstm1 = load_model(os.path.join('models', 'degree-lstm1-3x128-0.998val0.999-AGDTfirst26last7.h5'))
     degree_dnn = load_model(os.path.join('models', 'degree-dnn-2x20-0.999val0.999-AGDTfirst26last7.h5'))
-    degree_lstm2 = load_model(os.path.join('models', 'degree-lstm2-3x128-0.999val0.999-AGDTfirst26last7.h5'))
+    degree_lstm2 = load_model(os.path.join('models', 'degree-lstm2-3x128-'))
 
     # The possible tags for each item of morphology
     pos_tags = ('l', 'n', 'a', 'r', 'c', 'i', 'p', 'v', 'd', 'm', 'g', 'u')
@@ -125,14 +134,14 @@ pos, person, number, tense, mood, voice, gender, case, degree = create_morph_cla
 morphs = (pos, person, number, tense, mood, voice, gender, case, degree)
 
 # Load character list, annotator list, and vector dictionary
-print('Loading character, annotator list, and vector dictionary...')
+print('Loading character list, annotator list, and vector dictionary...')
 with open(os.path.join('data', 'jsons', 'all_norm_characters.json'), encoding='utf-8') as json_file:
     all_norm_characters = json.load(json_file)
 with open(os.path.join('data', 'jsons', 'annotators.json'), encoding='utf-8') as json_file:
     all_annotators = json.load(json_file)
 with open(os.path.join('data', 'jsons', 'short_annotators.json'), encoding='utf-8') as json_file:
     short_annotators = json.load(json_file)
-wv = KeyedVectors.load('models/word2vec.wordvectors')
+wv = KeyedVectors.load('models/fasttext.wordvectors')
 
 # Create the normalizer
 normalise = Normaliser().normalise
@@ -149,8 +158,8 @@ except IndexError:
 print('Pre-processing text...')
 blank_character_tensor = np.array([0]*174, dtype=np.float32)
 punc_separated_text = isolate_greek_punctuation(greek_text)
-print(punc_separated_text)
-print(punc_separated_text.split())
+split_text = punc_separated_text.split()
+print(f'Text and punctuation split into {len(split_text)} individual tokens.')
 one_hotted_tokens = []
 dnn_input = []
 blank_lstm2_token = np.array([0]*192)
@@ -158,7 +167,7 @@ lstm2_padding = np.tile(blank_lstm2_token, (7, 1))
 lstm2_input = []
 
 # Create character tensors and word tensors composed of those character tensors
-for word in punc_separated_text.split():
+for word in split_text:
 
     # The whole token tensor starts out blank because it's challenging to fill out the empty characters.
     token_tensor = np.array([blank_character_tensor]*21, dtype=np.float32)
@@ -220,7 +229,7 @@ for word in punc_separated_text.split():
 one_hots_np = np.array(one_hotted_tokens, dtype=np.float32)
 
 # Process through the first LSTM...
-print('Making LSTM1 predictions...')
+print('Making LSTM 1 predictions...')
 for aspect in morphs:
     aspect.output1 = aspect.lstm1.predict(one_hots_np)
 
@@ -237,7 +246,6 @@ for i, token in enumerate(punc_separated_text.split()):
                                     mood.output1[i], voice.output1[i], gender.output1[i], case.output1[i],
                                     degree.output1[i], annotator_tensor), axis=0))
 np_dnn_input = np.array(dnn_input)
-print(np_dnn_input.shape)
 
 # Run outputs through DNN
 print('Making DNN predictions...')
@@ -282,16 +290,6 @@ for aspect in morphs:
         aspect.confidence3.append(np.amax(tensor))
 
 for i, token in enumerate(punc_separated_text.split()):
-    print(token, f'{pos.confidence1[i]:.02%}',
-          pos.predicted_tags1[i] + person.predicted_tags1[i] +
-          number.predicted_tags1[i] + tense.predicted_tags1[i] + mood.predicted_tags1[i] + voice.predicted_tags1[i] +
-          gender.predicted_tags1[i] + case.predicted_tags1[i] + degree.predicted_tags1[i],
-          f'{pos.confidence2[i]:.02%}',
-          pos.predicted_tags2[i] + person.predicted_tags2[i] +
-          number.predicted_tags2[i] + tense.predicted_tags2[i] + mood.predicted_tags2[i] + voice.predicted_tags2[i] +
-          gender.predicted_tags2[i] + case.predicted_tags2[i] + degree.predicted_tags2[i],
-          f'{pos.confidence3[i]:.02%}',
-          pos.predicted_tags3[i] + person.predicted_tags3[i] +
+    print(token, pos.predicted_tags3[i] + person.predicted_tags3[i] +
           number.predicted_tags3[i] + tense.predicted_tags3[i] + mood.predicted_tags3[i] + voice.predicted_tags3[i] +
-          gender.predicted_tags3[i] + case.predicted_tags3[i] + degree.predicted_tags3[i]
-          )
+          gender.predicted_tags3[i] + case.predicted_tags3[i] + degree.predicted_tags3[i])

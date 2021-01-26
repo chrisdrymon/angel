@@ -4,7 +4,7 @@ import os
 import pickle
 from cltk.tokenize.greek.sentence import SentenceTokenizer
 from greek_normalisation.normalise import Normaliser, Norm
-from utilities_morph import elision_normalize, remove_greek_punctuation
+from utilities_morph import elision_normalize, isolate_greek_punctuation
 
 text_folder = os.path.join('data', 'corpora', 'greek', 'plaintext')
 
@@ -26,8 +26,7 @@ for file in sorted(os.listdir(text_folder))[2:]:
             new_sentence = []
 
             # For each word in the sentence, remove punctuation and normalise its spelling.
-            for word in greek_sentence.split():
-                word = remove_greek_punctuation(word)
+            for word in isolate_greek_punctuation(greek_sentence).split():
                 normalized_form = normalise(elision_normalize(word))[0]
                 new_sentence.append(normalized_form)
 

@@ -246,3 +246,7 @@ def remove_greek_punctuation(word):
     return word.replace(',', '').replace('·', '').replace(';', '').replace('.', '').replace('?', '').replace('»', '').\
         replace('«', '').replace('“', '').replace('„', '')
 
+
+def isolate_greek_punctuation(fsentence):
+    return fsentence.replace(',', ' , ').replace('·', ' · ').replace(';', ' ; ').replace('.', ' . ').\
+        replace('?', ' ? ').replace('»', ' » ').replace('«', ' « ').replace('“', ' “ ').replace('„', ' „ ')

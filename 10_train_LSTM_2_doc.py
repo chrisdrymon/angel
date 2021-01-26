@@ -27,9 +27,9 @@ cells = 128
 
 # Import samples
 print('Loading samples and validation...')
-with open(os.path.join('data', 'pickles', f'samples-LSTM2-{sample_string}.pickle'), 'rb') as infile1:
+with open(os.path.join('data', 'pickles', f'samples-LSTM2-fasttext-{sample_string}.pickle'), 'rb') as infile1:
     train_data = pickle.load(infile1)
-with open(os.path.join('data', 'pickles', f'samples-LSTM2-{val_string}.pickle'), 'rb') as infile1:
+with open(os.path.join('data', 'pickles', f'samples-LSTM2-fasttext-{val_string}.pickle'), 'rb') as infile1:
     val_data = pickle.load(infile1)
 
 print(f'Train data shape: {train_data.shape}')
@@ -74,15 +74,15 @@ for aspect in morphs[1:]:
     # Create the model according to the number of layers chosen above.
     layers_left = nn_layers
     if layers_left > 1:
-        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45, return_sequences=True),
+        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.5, return_sequences=True),
                                        input_shape=(15, 192)))
         layers_left -= 1
         while layers_left > 1:
-            model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45, return_sequences=True)))
+            model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.5, return_sequences=True)))
             layers_left -= 1
-        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45)))
+        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.5)))
     else:
-        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.45), input_shape=(15, 192)))
+        model.add(layers.Bidirectional(layers.LSTM(cells, activation='tanh', dropout=0.5), input_shape=(15, 192)))
     model.add(layers.Dense(len(aspect.tags) + 1, activation='softmax'))
 
     modelSaver = ModelSaver(aspect.title, nn_type, nn_layers, cells, corpus_string)

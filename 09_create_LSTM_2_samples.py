@@ -6,7 +6,7 @@ import numpy as np
 from utilities_morph import create_morph_classes, ModelSaver
 
 # Change this to fit the target corpus: AGDT-first26 or AGDT-last7
-corpus_string = 'AGDT-first26'
+corpus_string = 'AGDT-last7'
 
 # Load the trained DNN's
 print('Creating morphology classes...')
@@ -25,15 +25,14 @@ with open(os.path.join('data', 'pickles', f'samples-DNN-{corpus_string}.pickle')
 
 # Load word vectors
 print('Loading word vectors...')
-with open(os.path.join('data', 'pickles', f'vectors-{corpus_string}-periods.pickle'), 'rb') as infile3:
+with open(os.path.join('data', 'pickles', f'vectors-fasttext-{corpus_string}.pickle'), 'rb') as infile3:
     vector_samples = pickle.load(infile3)
 
 # Run samples through each DNN
 for aspect in morphs:
     print(f'Running samples through {aspect.title} DNN...')
     aspect.dnn_output = aspect.dnn.predict(dnn_input)
-    with open(os.path.join('data', 'pickles', f'output-DNN-{aspect.title}-{corpus_string}-periods.pickle'), 'wb') as \
-            outfile:
+    with open(os.path.join('data', 'pickles', f'output-DNN-{aspect.title}-{corpus_string}.pickle'), 'wb') as outfile:
         pickle.dump(aspect.dnn_output, outfile)
 
 # If the program is stable, concatenate those outputs. That concatenated tensor represents a single word.
@@ -51,5 +50,5 @@ while i < len(pos.dnn_output):
     i += 1
 
 np_samples = np.array(lstm2_samples)
-with open(os.path.join('data', 'pickles', f'samples-LSTM2-{corpus_string}-periods.pickle'), 'wb') as outfile:
+with open(os.path.join('data', 'pickles', f'samples-LSTM2-fasttext-{corpus_string}.pickle'), 'wb') as outfile:
     pickle.dump(np_samples, outfile)
