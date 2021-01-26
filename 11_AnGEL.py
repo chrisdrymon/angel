@@ -52,27 +52,27 @@ def create_morph_classes():
     print('Mood models loading...')
     mood_lstm1 = load_model(os.path.join('models', 'mood-lstm1-3x128-0.981val0.992-AGDTfirst26last7.h5'))
     mood_dnn = load_model(os.path.join('models', 'mood-dnn-2x20-0.994val0.992-AGDTfirst26last7.h5'))
-    mood_lstm2 = load_model(os.path.join('models', 'mood-lstm2-3x128-0.993val0.994-AGDTfirst26last7.h5'))
+    mood_lstm2 = load_model(os.path.join('models', 'mood-lstm2-3x128-0.994val0.995-AGDTfirst26last7.h5'))
 
     print('Voice models loading...')
     voice_lstm1 = load_model(os.path.join('models', 'voice-lstm1-3x128-0.978val0.991-AGDTfirst26last7.h5'))
     voice_dnn = load_model(os.path.join('models', 'voice-dnn-2x20-0.992val0.993-AGDTfirst26last7.h5'))
-    voice_lstm2 = load_model(os.path.join('models', 'voice-lstm2-3x128-'))
+    voice_lstm2 = load_model(os.path.join('models', 'voice-lstm2-3x128-0.989val0.993-AGDTfirst26last7.h5'))
 
     print('Gender models loading...')
     gender_lstm1 = load_model(os.path.join('models', 'gender-lstm1-3x128-0.923val0.934-AGDTfirst26last7.h5'))
     gender_dnn = load_model(os.path.join('models', 'gender-dnn-2x20-0.952val0.937-AGDTfirst26last7.h5'))
-    gender_lstm2 = load_model(os.path.join('models', 'gender-lstm2-3x128-'))
+    gender_lstm2 = load_model(os.path.join('models', 'gender-lstm2-4x128-0.960val0.958-AGDTfirst26last7.h5'))
 
     print('Case models loading...')
     case_lstm1 = load_model(os.path.join('models', 'case-lstm1-3x128-0.934val0.962-AGDTfirst26last7.h5'))
     case_dnn = load_model(os.path.join('models', 'case-dnn-2x20-0.957val0.963-AGDTfirst26last7.h5'))
-    case_lstm2 = load_model(os.path.join('models', 'case-lstm2-3x128-'))
+    case_lstm2 = load_model(os.path.join('models', 'case-lstm2-3x128-0.975val0.979-AGDTfirst26last7.h5'))
 
     print('Degree models loading...')
     degree_lstm1 = load_model(os.path.join('models', 'degree-lstm1-3x128-0.998val0.999-AGDTfirst26last7.h5'))
     degree_dnn = load_model(os.path.join('models', 'degree-dnn-2x20-0.999val0.999-AGDTfirst26last7.h5'))
-    degree_lstm2 = load_model(os.path.join('models', 'degree-lstm2-3x128-'))
+    degree_lstm2 = load_model(os.path.join('models', 'degree-lstm2-3x128-0.999val0.999-AGDTfirst26last7.h5'))
 
     # The possible tags for each item of morphology
     pos_tags = ('l', 'n', 'a', 'r', 'c', 'i', 'p', 'v', 'd', 'm', 'g', 'u')

@@ -22,7 +22,7 @@ sample_string = 'AGDT-first26'
 val_string = 'AGDT-last7'
 corpus_string = 'AGDTfirst26last7'
 nn_type = 'lstm2'
-nn_layers = 3
+nn_layers = 2
 cells = 128
 
 # Import samples
@@ -43,7 +43,7 @@ end_data_padding = np.tile(train_blank_array, (8, 1))
 padded_train_data = np.concatenate((start_data_padding, train_data, end_data_padding), axis=0)
 padded_val_data = np.concatenate((start_data_padding, val_data, end_data_padding), axis=0)
 
-for aspect in morphs[1:]:
+for aspect in morphs[7:]:
 
     # Load different labels for each aspect of morphology
     print('Loading training labels...')
