@@ -68,7 +68,7 @@
       <word id="33" form="τήν" lemma="ὁ" postag="l-s---fa-" relation="ATR" head="35"/>
       <word id="34" form="τε" lemma="τε" postag="d--------" relation="AuxY" head="46"/>
       <word id="35" form="πόλιν" lemma="πόλις" postag="n-s---fa-" relation="SBJ" head="37"/>
-      <word id="36" form="μεγάλα" lemma="μέγας" postag="a-p---na_" relation="ADV" head="37"/>
+      <word id="36" form="μεγάλα" lemma="μέγας" postag="a-p---na-" relation="ADV" head="37"/>
       <word id="37" form="βλαπτομένην" lemma="βλάπτω" postag="v-sppefa-" relation="OBJ" head="31"/>
       <word id="38" form="ὑπὸ" lemma="ὑπό" postag="r--------" relation="AuxP" head="37"/>
       <word id="39" form="Τιμάρχου" lemma="Τίμαρχος" postag="n-s---mg-" relation="OBJ" head="38"/>
@@ -83,7 +83,7 @@
       <word id="48" form="ἰδίᾳ" lemma="ἴδιος" postag="a-s---fd-" relation="ADV" head="49"/>
       <word id="49" form="συκοφαντούμενος" lemma="συκοφαντέω" postag="v-sppemn-" relation="ADV_CO" head="46"/>
       <word id="50" form="(" lemma="punc1" postag="u--------" relation="AuxG" head="56"/>
-      <word id="51" form="ὃν" lemma="ὅς" postag="a-s---ma_" relation="ADV" head="53"/>
+      <word id="51" form="ὃν" lemma="ὅς" postag="a-s---ma-" relation="ADV" head="53"/>
       <word id="52" form="δὲ" lemma="δέ" postag="d--------" relation="AuxY" head="56"/>
       <word id="53" form="τρόπον" lemma="τρόπος" postag="n-s---ma-" relation="OBJ" head="56"/>
       <word id="54" form="," lemma="punc1" postag="u--------" relation="AuxX" head="0"/>
