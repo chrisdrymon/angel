@@ -1,4 +1,4 @@
-# greek-morph-tagger
+# AnGEL Morphology
 ## An Ancient Greek Morphology Tagger
 Angel takes in Ancient Greek plain text and returns morphology tags for each token. More specifically, it tags part-of-speech, person, number, tense, mood, voice, gender, case, and degree. The morphology tagging mostly follows the [AGDT 2.0 style](https://github.com/PerseusDL/treebank_data/blob/master/AGDT2/guidelines/Greek_guidelines.md#mph_tgs). The exception would be the inclusion of the "g" tag for the part-of-speech "particle" which is not included in the AGDT 2.0 documentation, but is used by some annotators within the [AGDT 2.1 treebank](https://github.com/PerseusDL/treebank_data/tree/master/v2.1/Greek) collection. For a list of all tags available within each element, refer to the [AGDT 2.1 tagset](https://github.com/PerseusDL/treebank_data/blob/master/v2.1/Greek/TAGSETS.xml)
 
