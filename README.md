@@ -20,3 +20,6 @@ The initial model loading time as well as the manner in which the models were tr
 * A PIP release is coming
 * A lot more training data is available. It will be used.
 * Lemmatization and dependency tagging integration is planned. Other paradigms for morphology tagging may be implemented as well.
+
+## License
+Copyright (c) 2021 Christopher C. Drymon under the MIT license.
