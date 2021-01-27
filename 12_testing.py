@@ -5,6 +5,8 @@ import numpy as np
 from gensim.models import KeyedVectors
 from tensorflow.keras.models import load_model
 from bs4 import BeautifulSoup
+from collections import Counter
+import pandas as pd
 
 
 class Morphs:
@@ -158,6 +160,10 @@ lstm2_padding = np.tile(blank_lstm2_token, (7, 1))
 # Convert test file into input format
 corpora = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
 total_tokens = 0
+confusion = {}
+for tag in pos.tags:
+    confusion[tag] = Counter()
+
 for test_file in sorted(os.listdir(corpora))[:5]:
     xml_file = open(os.path.join(corpora, test_file), 'r', encoding='utf-8')
     soup = BeautifulSoup(xml_file, 'xml')
@@ -315,10 +321,31 @@ for test_file in sorted(os.listdir(corpora))[:5]:
                 aspect.total_correct += 1
             elif aspect.predicted_tags3[i] == '-' and aspect.correct_tags[i] == '_':
                 aspect.total_correct += 1
+        confusion[pos.predicted_tags3[i]][pos.correct_tags[i]] += 1
 
 for aspect in morphs:
     print(f'{aspect.title} correct: {aspect.total_correct}/{total_tokens} = {aspect.total_correct/total_tokens:.02%}')
 
+columns = []
+
+for tag in pos.tags:
+    c_matrix_line = []
+    tot_predicts = 0
+    if confusion[tag]:
+        for answer in confusion[tag]:
+            tot_predicts += confusion[tag][answer]
+        for other_tag in pos.tags:
+            try:
+                c_matrix_line.append(f'{confusion[tag][other_tag]/tot_predicts:.02%}')
+            except KeyError:
+                c_matrix_line.append(f'{0:.02%}')
+        confusion[tag] = c_matrix_line
+    columns.append(tag)
+
+df = pd.DataFrame.from_dict(confusion, orient='index', columns=columns)
+df.to_csv('gorman_first5.csv')
+pd.set_option('display.max_columns', None)
+print(df)
 # for i, token in enumerate(split_text):
 #     print(token, f'{pos.confidence1[i]:.02%}',
 #           pos.predicted_tags1[i] + person.predicted_tags1[i] +
