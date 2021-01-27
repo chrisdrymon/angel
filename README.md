@@ -22,4 +22,4 @@ The initial model loading time as well as the manner in which the models were tr
 * Lemmatization and dependency tagging integration is planned. Other paradigms for morphology tagging may be implemented as well.
 
 ## License
-Copyright (c) 2021 Christopher C. Drymon under the MIT license.
+Copyright (c) 2021 Chris Drymon under the [MIT license](https://github.com/chrisdrymon/greek-morph-tagger/blob/master/LICENSE).
