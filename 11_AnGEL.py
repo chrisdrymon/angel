@@ -2,8 +2,6 @@ import os
 import json
 from greek_normalisation.normalise import Normaliser
 import numpy as np
-import tensorflow as tf
-import pickle
 from gensim.models import KeyedVectors
 from tensorflow.keras.models import load_model
 
@@ -74,7 +72,7 @@ def create_morph_classes():
     degree_dnn = load_model(os.path.join('models', 'degree-dnn-2x20-0.999val0.999-AGDTfirst26last7.h5'))
     degree_lstm2 = load_model(os.path.join('models', 'degree-lstm2-3x128-0.999val0.999-AGDTfirst26last7.h5'))
 
-    # The possible tags for each item of morphology
+    # The possible tags for each aspect of morphology
     pos_tags = ('l', 'n', 'a', 'r', 'c', 'i', 'p', 'v', 'd', 'm', 'g', 'u')
     person_tags = ('1', '2', '3')
     number_tags = ('s', 'p', 'd')
@@ -110,12 +108,6 @@ def isolate_greek_punctuation(fsentence):
         replace('?', ' ? ').replace('»', ' » ').replace('«', ' « ').replace('“', ' “ ').replace('„', ' „ ')
 
 
-def remove_greek_punctuation(fword):
-    """Return the Greek input without punctuation."""
-    return fword.replace(',', '').replace('·', '').replace(';', '').replace('.', '').replace('?', '').replace('»', '').\
-        replace('«', '').replace('“', '').replace('„', '')
-
-
 def vector_lookup(gword):
     try:
         return wv[gword]
@@ -128,7 +120,6 @@ greek_text = 'νέος μὲν καὶ ἄπειρος δικῶν ἔγωγε �
              'ἀναγκαίως ἔχει οἷς ἥκιστα ἐχρῆν ἐν διαφορᾷ καταστῆναι, ἀδελφοῖς ὁμοπατρίοις καὶ μητρὶ ἀδελφῶν.'
 annotator = 'Vanessa Gorman'
 
-# Add LSTM2 to these when they are ready
 print('Loading models...')
 pos, person, number, tense, mood, voice, gender, case, degree = create_morph_classes()
 morphs = (pos, person, number, tense, mood, voice, gender, case, degree)

@@ -326,8 +326,8 @@ for test_file in sorted(os.listdir(corpora))[:5]:
 for aspect in morphs:
     print(f'{aspect.title} correct: {aspect.total_correct}/{total_tokens} = {aspect.total_correct/total_tokens:.02%}')
 
+# Construct a confusion matrix
 columns = []
-
 for tag in pos.tags:
     c_matrix_line = []
     tot_predicts = 0
@@ -343,19 +343,5 @@ for tag in pos.tags:
     columns.append(tag)
 
 df = pd.DataFrame.from_dict(confusion, orient='index', columns=columns)
-df.to_csv('gorman_first5.csv')
-pd.set_option('display.max_columns', None)
-print(df)
-# for i, token in enumerate(split_text):
-#     print(token, f'{pos.confidence1[i]:.02%}',
-#           pos.predicted_tags1[i] + person.predicted_tags1[i] +
-#           number.predicted_tags1[i] + tense.predicted_tags1[i] + mood.predicted_tags1[i] + voice.predicted_tags1[i] +
-#           gender.predicted_tags1[i] + case.predicted_tags1[i] + degree.predicted_tags1[i],
-#           f'{pos.confidence2[i]:.02%}',
-#           pos.predicted_tags2[i] + person.predicted_tags2[i] +
-#           number.predicted_tags2[i] + tense.predicted_tags2[i] + mood.predicted_tags2[i] + voice.predicted_tags2[i] +
-#           gender.predicted_tags2[i] + case.predicted_tags2[i] + degree.predicted_tags2[i],
-#           f'{pos.confidence3[i]:.02%}',
-#           pos.predicted_tags3[i] + person.predicted_tags3[i] +
-#           number.predicted_tags3[i] + tense.predicted_tags3[i] + mood.predicted_tags3[i] + voice.predicted_tags3[i] +
-#           gender.predicted_tags3[i] + case.predicted_tags3[i] + degree.predicted_tags3[i])
+# df.to_csv('gorman_first5.csv')
+print(df.to_string(index=False))
