@@ -2,8 +2,6 @@ import os
 import json
 from greek_normalisation.normalise import Normaliser
 import numpy as np
-import tensorflow as tf
-import pickle
 from gensim.models import KeyedVectors
 from tensorflow.keras.models import load_model
 from bs4 import BeautifulSoup
@@ -126,9 +124,6 @@ def vector_lookup(gword):
         return np.array([0]*100)
 
 
-test_file = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman', 'athen12-1-9-2019.xml')
-annotator = 'Vanessa Gorman'
-
 # Add LSTM2 to these when they are ready
 print('Loading models...')
 pos, person, number, tense, mood, voice, gender, case, degree = create_morph_classes()
@@ -148,6 +143,7 @@ wv = KeyedVectors.load('models/fasttext.wordvectors')
 normalise = Normaliser().normalise
 
 # Create annotator tensor
+annotator = 'Vanessa Gorman'
 annotator_tensor = [0] * 37
 try:
     annotator_tensor[all_annotators.index(annotator)] = 1
@@ -156,163 +152,173 @@ try:
 except IndexError:
     annotator_tensor[0] = 1
 
-# Convert test file into input format
-xml_file = open(test_file, 'r', encoding='utf-8')
-soup = BeautifulSoup(xml_file, 'xml')
-sentences = soup.find_all('sentence')
-split_text = []
-
-for sentence in sentences:
-    tokens = sentence.find_all(['word', 'token'])
-    for token in tokens:
-        if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False and \
-                len(token['postag']) == 9:
-            split_text.append(token['form'])
-            for i, tag in enumerate(token['postag']):
-                morphs[i].correct_tags.append(tag)
-
-print('Pre-processing text...')
-blank_character_tensor = np.array([0]*174, dtype=np.float32)
-print(f'Text and punctuation split into {len(split_text)} individual tokens.')
-one_hotted_tokens = []
-dnn_input = []
 blank_lstm2_token = np.array([0]*192)
 lstm2_padding = np.tile(blank_lstm2_token, (7, 1))
-lstm2_input = []
 
-# Create character tensors and word tensors composed of those character tensors
-for word in split_text:
-
-    # The whole token tensor starts out blank because it's challenging to fill out the empty characters.
-    token_tensor = np.array([blank_character_tensor]*21, dtype=np.float32)
-
-    # Normalize each token before tensorizing its characters.
-    normalized_form = normalise(elision_normalize(word))[0]
-    token_length = len(normalized_form)
-
-    # Create token tensors for tokens longer than 21 characters
-    if token_length > 21:
-        token_tensor = []
-        for character in normalized_form[:10]:
-            character_tensor = [0]*137
-            try:
-                character_tensor[all_norm_characters.index(character)] = 1
-            except ValueError:
-                character_tensor[136] = 1
-
-            # Append the annotator tensor at the end of every character tensor
-            character_tensor = character_tensor + annotator_tensor
-            character_tensor = np.array(character_tensor, dtype=np.float32)
-            token_tensor.append(character_tensor)
-        character_tensor = [0]*137
-        character_tensor[135] = 1
-
-        # Append the annotator tensor at the end of every character tensor
-        character_tensor = character_tensor + annotator_tensor
-        character_tensor = np.array(character_tensor, dtype=np.float32)
-        token_tensor.append(character_tensor)
-        for character in normalized_form[-10:]:
-            character_tensor = [0]*137
-            try:
-                character_tensor[all_norm_characters.index(character)] = 1
-            except ValueError:
-                character_tensor[136] = 1
-
-            # Append the annotator tensor at the end of every character tensor
-            character_tensor = character_tensor + annotator_tensor
-            character_tensor = np.array(character_tensor, dtype=np.float32)
-            token_tensor.append(character_tensor)
-        token_tensor = np.array(token_tensor, dtype=np.float32)
-
-    # Create token tensors for tokens shorter than 22 characters
-    else:
-        for i, character in enumerate(normalized_form):
-            character_tensor = [0]*137
-            try:
-                character_tensor[all_norm_characters.index(character)] = 1
-            except ValueError:
-                character_tensor[136] = 1
-
-            # Append the annotator tensor at the end of every character tensor
-            character_tensor = character_tensor + annotator_tensor
-            character_tensor = np.array(character_tensor, dtype=np.float32)
-            token_tensor[21-token_length+i] = character_tensor
-
-    # Add each tensor token to the samples
-    one_hotted_tokens.append(token_tensor)
-one_hots_np = np.array(one_hotted_tokens, dtype=np.float32)
-
-# Process through the first LSTM...
-print('Making LSTM 1 predictions...')
-for aspect in morphs:
-    aspect.output1 = aspect.lstm1.predict(one_hots_np)
-
-for aspect in morphs:
-    for tensor in aspect.output1:
-        try:
-            aspect.predicted_tags1.append(aspect.tags[int(np.argmax(tensor))])
-        except IndexError:
-            aspect.predicted_tags1.append('-')
-        aspect.confidence1.append(np.amax(tensor))
-
-for i, token in enumerate(split_text):
-    dnn_input.append(np.concatenate((pos.output1[i], person.output1[i], number.output1[i], tense.output1[i],
-                                    mood.output1[i], voice.output1[i], gender.output1[i], case.output1[i],
-                                    degree.output1[i], annotator_tensor), axis=0))
-np_dnn_input = np.array(dnn_input)
-
-# Run outputs through DNN
-print('Making DNN predictions...')
-for aspect in morphs:
-    aspect.output2 = aspect.dnn.predict(np_dnn_input)
-
-for aspect in morphs:
-    for tensor in aspect.output2:
-        try:
-            aspect.predicted_tags2.append(aspect.tags[int(np.argmax(tensor))])
-        except IndexError:
-            aspect.predicted_tags2.append('-')
-        aspect.confidence2.append(np.amax(tensor))
-
-# Prepare inputs for LSTM2
-for i, token in enumerate(split_text):
-    lstm2_input.append(np.concatenate((pos.output2[i], person.output2[i], number.output2[i], tense.output2[i],
-                                       mood.output2[i], voice.output2[i], gender.output2[i], case.output2[i],
-                                       degree.output2[i], annotator_tensor,
-                                       vector_lookup(normalise(elision_normalize(token))[0])), axis=0))
-
-padded_lstm2_input = np.concatenate((lstm2_padding, lstm2_input, lstm2_padding))
-
-time_series = []
-for i in range(0, len(padded_lstm2_input)-14):
-    time_series.append(padded_lstm2_input[i:i+15])
-
-lstm2_ts = np.array(time_series)
-
-# Run outputs through LSTM2
-print('Making LSTM 2 predictions...')
-for aspect in morphs:
-    aspect.output3 = aspect.lstm2.predict(lstm2_ts)
-
-for aspect in morphs:
-    for tensor in aspect.output3:
-        try:
-            aspect.predicted_tags3.append(aspect.tags[int(np.argmax(tensor))])
-        except IndexError:
-            aspect.predicted_tags3.append('-')
-        aspect.confidence3.append(np.amax(tensor))
-
-total_tokens = len(split_text)
-
-for i, token in enumerate(split_text):
+# Convert test file into input format
+corpora = os.path.join('data', 'corpora', 'greek', 'annotated', 'gorman')
+total_tokens = 0
+for test_file in sorted(os.listdir(corpora))[:5]:
+    xml_file = open(os.path.join(corpora, test_file), 'r', encoding='utf-8')
+    soup = BeautifulSoup(xml_file, 'xml')
+    sentences = soup.find_all('sentence')
+    split_text = []
+    one_hotted_tokens = []
+    dnn_input = []
+    lstm2_input = []
     for aspect in morphs:
-        if aspect.predicted_tags3[i] == aspect.correct_tags[i]:
-            aspect.total_correct += 1
-        elif aspect.predicted_tags3[i] == '-' and aspect.correct_tags[i] == '_':
-            aspect.total_correct += 1
+        aspect.correct_tags = []
+
+    for sentence in sentences:
+        tokens = sentence.find_all(['word', 'token'])
+        for token in tokens:
+            if token.has_attr('form') and token.has_attr('postag') and token.has_attr('artificial') is False and \
+                    len(token['postag']) == 9:
+                split_text.append(token['form'])
+                for i, tag in enumerate(token['postag']):
+                    morphs[i].correct_tags.append(tag)
+
+    print('Pre-processing text...')
+    blank_character_tensor = np.array([0]*174, dtype=np.float32)
+    print(f'Text and punctuation split into {len(split_text)} individual tokens.')
+
+    # Create character tensors and word tensors composed of those character tensors
+    for word in split_text:
+
+        # The whole token tensor starts out blank because it's challenging to fill out the empty characters.
+        token_tensor = np.array([blank_character_tensor]*21, dtype=np.float32)
+
+        # Normalize each token before tensorizing its characters.
+        normalized_form = normalise(elision_normalize(word))[0]
+        token_length = len(normalized_form)
+
+        # Create token tensors for tokens longer than 21 characters
+        if token_length > 21:
+            token_tensor = []
+            for character in normalized_form[:10]:
+                character_tensor = [0]*137
+                try:
+                    character_tensor[all_norm_characters.index(character)] = 1
+                except ValueError:
+                    character_tensor[136] = 1
+
+                # Append the annotator tensor at the end of every character tensor
+                character_tensor = character_tensor + annotator_tensor
+                character_tensor = np.array(character_tensor, dtype=np.float32)
+                token_tensor.append(character_tensor)
+            character_tensor = [0]*137
+            character_tensor[135] = 1
+
+            # Append the annotator tensor at the end of every character tensor
+            character_tensor = character_tensor + annotator_tensor
+            character_tensor = np.array(character_tensor, dtype=np.float32)
+            token_tensor.append(character_tensor)
+            for character in normalized_form[-10:]:
+                character_tensor = [0]*137
+                try:
+                    character_tensor[all_norm_characters.index(character)] = 1
+                except ValueError:
+                    character_tensor[136] = 1
+
+                # Append the annotator tensor at the end of every character tensor
+                character_tensor = character_tensor + annotator_tensor
+                character_tensor = np.array(character_tensor, dtype=np.float32)
+                token_tensor.append(character_tensor)
+            token_tensor = np.array(token_tensor, dtype=np.float32)
+
+        # Create token tensors for tokens shorter than 22 characters
+        else:
+            for i, character in enumerate(normalized_form):
+                character_tensor = [0]*137
+                try:
+                    character_tensor[all_norm_characters.index(character)] = 1
+                except ValueError:
+                    character_tensor[136] = 1
+
+                # Append the annotator tensor at the end of every character tensor
+                character_tensor = character_tensor + annotator_tensor
+                character_tensor = np.array(character_tensor, dtype=np.float32)
+                token_tensor[21-token_length+i] = character_tensor
+
+        # Add each tensor token to the samples
+        one_hotted_tokens.append(token_tensor)
+    one_hots_np = np.array(one_hotted_tokens, dtype=np.float32)
+
+    # Process through the first LSTM...
+    print('Making LSTM 1 predictions...')
+    for aspect in morphs:
+        aspect.output1 = aspect.lstm1.predict(one_hots_np)
+
+    for aspect in morphs:
+        aspect.predicted_tags1 = []
+        for tensor in aspect.output1:
+            try:
+                aspect.predicted_tags1.append(aspect.tags[int(np.argmax(tensor))])
+            except IndexError:
+                aspect.predicted_tags1.append('-')
+            aspect.confidence1.append(np.amax(tensor))
+
+    for i, token in enumerate(split_text):
+        dnn_input.append(np.concatenate((pos.output1[i], person.output1[i], number.output1[i], tense.output1[i],
+                                        mood.output1[i], voice.output1[i], gender.output1[i], case.output1[i],
+                                        degree.output1[i], annotator_tensor), axis=0))
+    np_dnn_input = np.array(dnn_input)
+
+    # Run outputs through DNN
+    print('Making DNN predictions...')
+    for aspect in morphs:
+        aspect.output2 = aspect.dnn.predict(np_dnn_input)
+
+    for aspect in morphs:
+        aspect.predicted_tags2 = []
+        for tensor in aspect.output2:
+            try:
+                aspect.predicted_tags2.append(aspect.tags[int(np.argmax(tensor))])
+            except IndexError:
+                aspect.predicted_tags2.append('-')
+            aspect.confidence2.append(np.amax(tensor))
+
+    # Prepare inputs for LSTM2
+    for i, token in enumerate(split_text):
+        lstm2_input.append(np.concatenate((pos.output2[i], person.output2[i], number.output2[i], tense.output2[i],
+                                           mood.output2[i], voice.output2[i], gender.output2[i], case.output2[i],
+                                           degree.output2[i], annotator_tensor,
+                                           vector_lookup(normalise(elision_normalize(token))[0])), axis=0))
+
+    padded_lstm2_input = np.concatenate((lstm2_padding, lstm2_input, lstm2_padding))
+
+    time_series = []
+    for i in range(0, len(padded_lstm2_input)-14):
+        time_series.append(padded_lstm2_input[i:i+15])
+
+    lstm2_ts = np.array(time_series)
+
+    # Run outputs through LSTM2
+    print('Making LSTM 2 predictions...')
+    for aspect in morphs:
+        aspect.output3 = aspect.lstm2.predict(lstm2_ts)
+
+    for aspect in morphs:
+        aspect.predicted_tags3 = []
+        for tensor in aspect.output3:
+            try:
+                aspect.predicted_tags3.append(aspect.tags[int(np.argmax(tensor))])
+            except IndexError:
+                aspect.predicted_tags3.append('-')
+            aspect.confidence3.append(np.amax(tensor))
+
+    total_tokens += len(split_text)
+
+    for i, token in enumerate(split_text):
+        for aspect in morphs:
+            if aspect.predicted_tags3[i] == aspect.correct_tags[i]:
+                aspect.total_correct += 1
+            elif aspect.predicted_tags3[i] == '-' and aspect.correct_tags[i] == '_':
+                aspect.total_correct += 1
 
 for aspect in morphs:
     print(f'{aspect.title} correct: {aspect.total_correct}/{total_tokens} = {aspect.total_correct/total_tokens:.02%}')
+
 # for i, token in enumerate(split_text):
 #     print(token, f'{pos.confidence1[i]:.02%}',
 #           pos.predicted_tags1[i] + person.predicted_tags1[i] +
