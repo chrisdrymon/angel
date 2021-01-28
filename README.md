@@ -15,7 +15,7 @@ The initial model loading time as well as the manner in which the models were tr
 
 ## Further Development
 * Exceptionally large works may cause memory issues. This will be addressed in subsequent updates.
-* There are noteworthy, systematic inconsistencies among the treebanks used for training. For instance, obsolete tags still exist in the current version of AGDT. I'll make attempts at training on cleaner data.
+* Some tags which are now considered obsolete still exist in older AGDT treebanks. I'll make attempts at training on cleaner data.
 * Much hyperparameter tinkering to be done.
 * A PIP release is coming
 * A lot more training data is available. It will be used.
