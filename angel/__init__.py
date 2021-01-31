@@ -295,16 +295,11 @@ def tag(greek_text, annotator='Vanessa Gorman'):
     return tuple(return_list)
 
 
-# This will hopefully keep Tensorflow quieter.
+# This will keep Tensorflow quieter.
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-# This is a check to see which 'home' environmental variable is the correct one.
-if 'HOME' in os.environ:
-    model_folder = os.path.join(os.environ['HOME'], 'angel_models')
-elif 'HOMEPATH' in os.environ:
-    model_folder = os.path.join(os.environ['HOMEPATH'], 'angel_models')
-else:
-    model_folder = 'angel_models'
+# This should place the models in a predictable place no matter the OS.
+model_folder = os.path.join(os.path.expanduser('~'), 'angel_models')
 
 # See if models have been downloaded. If not, download them.
 if os.path.isdir(model_folder) and 'fasttext.wordvectors' in os.listdir(model_folder):
@@ -319,14 +314,8 @@ else:
     url = 'https://drive.google.com/uc?id=1MPTNoRNnTEY818BOdCjRhs7nSG3PgRWW'
     output = 'models.tar.xz'
     gdown.download(url, output, quiet=False)
-    if 'HOME' in os.environ:
-        extract_folder = os.path.join(os.environ['HOME'], 'angel_models')
-    elif 'HOMEPATH' in os.environ:
-        extract_folder = os.path.join(os.environ['HOMEPATH'], 'angel_models')
-    else:
-        # This is a really bad option. You'll have to re-download for every project. I need to look up the most
-        # widespread environmental variables
-        extract_folder = 'angel_models'
+    extract_folder = os.path.join(os.path.expanduser('~'), 'angel_models')
+
     print(f'Unpacking models to {extract_folder}...')
     tar = tarfile.open(output, 'r:xz')
     tar.extractall(path=extract_folder)
