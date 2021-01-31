@@ -1,0 +1,14 @@
+Change Log
+==========
+0.0.1 (28 Jan 2021)
+-------------------
+First Release
+
+0.0.2 (30 Jan 2021)
+-------------------
+Removed json importing from data folder. It's all explicitly in the .py file now. Updated manifest and setup
+accordingly.
+
+0.0.3 (30 Jan 2021)
+-------------------
+Changed tensorflow's verbosity setting.
