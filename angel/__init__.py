@@ -123,21 +123,6 @@ def tag(greek_text, annotator='Vanessa Gorman'):
     print('Loading models...')
     pos, person, number, tense, mood, voice, gender, case, degree = create_morph_classes()
     morphs = (pos, person, number, tense, mood, voice, gender, case, degree)
-    all_norm_characters = ["ζ", "ε", "ύ", "ς", "μ", "έ", "ν", "ἀ", "φ", "ί", "κ", "τ", "ω", "ρ", "ἐ", "π", "δ", "ο",
-                           "ι", "ό", "σ", "λ", "ἡ", "ά", "θ", "̓", "ψ", "α", "υ", ".", "ῦ", "χ", "γ", "ᾳ", ",", "ὔ",
-                           "ἵ", "η", "ή", "ῳ", "ῖ", "ὐ", "ξ", "ἰ", "β", "ῆ", "ῶ", "ἅ", "ἄ", "ὅ", "ὖ", "ώ", "ᾶ", "ἱ",
-                           ";", "ὦ", "ὕ", "ὁ", "·", "ἑ", "ὑ", "ὄ", "ἔ", "ῇ", "ὀ", "ἁ", "ὧ", "ἴ", "-", "ῤ", "ἶ", "ὶ",
-                           "[", "]", "ΐ", "ἠ", "ὡ", "ὤ", "ἕ", "ἥ", "ῥ", "ᾷ", "ἆ", "ῷ", "ὠ", "ῃ", "ἤ", "ῄ", "ἦ", "ἧ",
-                           "ᾔ", "?", " ", "\"", "ᾠ", "ἷ", "ὥ", "ᾖ", "ᾤ", "ῴ", "ὗ", "ϊ", "ᾇ", "ᾧ", "(", ")", "ᾁ", "ᾗ",
-                           "ᾴ", "ᾡ", "ᾐ", "ᾑ", "ΰ", "ᾀ", "ᾕ", "ᾆ", "†", "¯", "̆", "ᾄ", ">", "ϋ", "ῗ", "ᾦ", "<", "2",
-                           "0", "’", ":", "—", "（", "）", "ᾅ", "ῧ", "ϝ"]
-    all_annotators = ["Vanessa Gorman", "david.bamman", "david", "millermo2", "gleason", "Sean Stewart",
-                      "Robert Gorman", "Francesco Mambrini", "Daniel Lim Libatique", "Alex Lessie", "James C. D'Amico",
-                      "Brian Livingston", "Calliopi Dourou", "C. Dan Earley", "Connor Hayden", "Francis Hartel",
-                      "George Matthews", "J. F. Gentile", "Jennifer Adams", "Jessica Nord", "Jennifer Curtin",
-                      "Mary Ebbott", "Meg Luthin", "Molly Miller", "Michael Kinney", "Jack Mitchell", "Sam Zukoff",
-                      "Scott J. Dube", "Tovah Keynton", "W. B. Dolan", "Florin Leonte", "Anthony D. Yates",
-                      "Jordan Hawkesworth", "Giuseppe G. A. Celano", "Yoana Ivanova", "Polina Yordanova"]
 
     # Create the normalizer
     normalise = Normaliser().normalise
@@ -297,6 +282,23 @@ def tag(greek_text, annotator='Vanessa Gorman'):
 
 # This will keep Tensorflow quieter.
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
+
+# Load some lists that'll be needed
+all_norm_characters = ("ζ", "ε", "ύ", "ς", "μ", "έ", "ν", "ἀ", "φ", "ί", "κ", "τ", "ω", "ρ", "ἐ", "π", "δ", "ο",
+                       "ι", "ό", "σ", "λ", "ἡ", "ά", "θ", "̓", "ψ", "α", "υ", ".", "ῦ", "χ", "γ", "ᾳ", ",", "ὔ",
+                       "ἵ", "η", "ή", "ῳ", "ῖ", "ὐ", "ξ", "ἰ", "β", "ῆ", "ῶ", "ἅ", "ἄ", "ὅ", "ὖ", "ώ", "ᾶ", "ἱ",
+                       ";", "ὦ", "ὕ", "ὁ", "·", "ἑ", "ὑ", "ὄ", "ἔ", "ῇ", "ὀ", "ἁ", "ὧ", "ἴ", "-", "ῤ", "ἶ", "ὶ",
+                       "[", "]", "ΐ", "ἠ", "ὡ", "ὤ", "ἕ", "ἥ", "ῥ", "ᾷ", "ἆ", "ῷ", "ὠ", "ῃ", "ἤ", "ῄ", "ἦ", "ἧ",
+                       "ᾔ", "?", " ", "\"", "ᾠ", "ἷ", "ὥ", "ᾖ", "ᾤ", "ῴ", "ὗ", "ϊ", "ᾇ", "ᾧ", "(", ")", "ᾁ", "ᾗ",
+                       "ᾴ", "ᾡ", "ᾐ", "ᾑ", "ΰ", "ᾀ", "ᾕ", "ᾆ", "†", "¯", "̆", "ᾄ", ">", "ϋ", "ῗ", "ᾦ", "<", "2",
+                       "0", "’", ":", "—", "（", "）", "ᾅ", "ῧ", "ϝ")
+all_annotators = ("Vanessa Gorman", "david.bamman", "david", "millermo2", "gleason", "Sean Stewart",
+                  "Robert Gorman", "Francesco Mambrini", "Daniel Lim Libatique", "Alex Lessie", "James C. D'Amico",
+                  "Brian Livingston", "Calliopi Dourou", "C. Dan Earley", "Connor Hayden", "Francis Hartel",
+                  "George Matthews", "J. F. Gentile", "Jennifer Adams", "Jessica Nord", "Jennifer Curtin",
+                  "Mary Ebbott", "Meg Luthin", "Molly Miller", "Michael Kinney", "Jack Mitchell", "Sam Zukoff",
+                  "Scott J. Dube", "Tovah Keynton", "W. B. Dolan", "Florin Leonte", "Anthony D. Yates",
+                  "Jordan Hawkesworth", "Giuseppe G. A. Celano", "Yoana Ivanova", "Polina Yordanova")
 
 # This should place the models in a predictable place no matter the OS.
 model_folder = os.path.join(os.path.expanduser('~'), 'angel_models')
