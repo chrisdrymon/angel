@@ -12,3 +12,7 @@ accordingly.
 0.0.3 (30 Jan 2021)
 -------------------
 Changed tensorflow's verbosity setting.
+
+0.0.4 (31 Jan 2021)
+-------------------
+Moved annotator and character tuples. Changed print output while doing inference.

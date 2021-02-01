@@ -1,2 +1,3 @@
-global-include *.txt *.md
+include CHANGELOG.txt
+include LICENSE.txt
 include angel/__init__.py

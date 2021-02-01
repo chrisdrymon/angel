@@ -211,7 +211,7 @@ def tag(greek_text, annotator='Vanessa Gorman'):
     one_hots_np = np.array(one_hotted_tokens, dtype=np.float32)
 
     # Process through the first LSTM...
-    print('Making LSTM 1 predictions...')
+    print("Angel's looking at each word by itself...")
     for aspect in morphs:
         aspect.output1 = aspect.lstm1.predict(one_hots_np)
 
@@ -230,7 +230,7 @@ def tag(greek_text, annotator='Vanessa Gorman'):
     np_dnn_input = np.array(dnn_input)
 
     # Run outputs through DNN
-    print('Making DNN predictions...')
+    print('Reconsidering tags...')
     for aspect in morphs:
         aspect.output2 = aspect.dnn.predict(np_dnn_input)
 
@@ -261,7 +261,7 @@ def tag(greek_text, annotator='Vanessa Gorman'):
     # dataset = tf.data.Dataset.from_tensor_slices(padded_lstm2_input).window(15, 1, 1)
 
     # Run outputs through LSTM2
-    print('Making LSTM 2 predictions...')
+    print("Studying each word in light of its context...")
     for aspect in morphs:
         aspect.output3 = aspect.lstm2.predict(lstm2_ts)
 
@@ -283,7 +283,7 @@ def tag(greek_text, annotator='Vanessa Gorman'):
 # This will keep Tensorflow quieter.
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.ERROR)
 
-# Load some lists that'll be needed
+# Load some tuples that'll be needed
 all_norm_characters = ("ζ", "ε", "ύ", "ς", "μ", "έ", "ν", "ἀ", "φ", "ί", "κ", "τ", "ω", "ρ", "ἐ", "π", "δ", "ο",
                        "ι", "ό", "σ", "λ", "ἡ", "ά", "θ", "̓", "ψ", "α", "υ", ".", "ῦ", "χ", "γ", "ᾳ", ",", "ὔ",
                        "ἵ", "η", "ή", "ῳ", "ῖ", "ὐ", "ξ", "ἰ", "β", "ῆ", "ῶ", "ἅ", "ἄ", "ὅ", "ὖ", "ώ", "ᾶ", "ἱ",
