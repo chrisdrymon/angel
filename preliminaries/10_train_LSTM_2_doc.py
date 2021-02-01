@@ -22,14 +22,14 @@ sample_string = 'AGDT-first26'
 val_string = 'AGDT-last7'
 corpus_string = 'AGDTfirst26last7'
 nn_type = 'lstm2'
-nn_layers = 2
-cells = 128
+nn_layers = 3
+cells = 256
 
 # Import samples
 print('Loading samples and validation...')
-with open(os.path.join('../data', 'pickles', f'samples-LSTM2-fasttext-{sample_string}.pickle'), 'rb') as infile1:
+with open(os.path.join('data', 'pickles', f'samples-LSTM2-fasttext-{sample_string}.pickle'), 'rb') as infile1:
     train_data = pickle.load(infile1)
-with open(os.path.join('../data', 'pickles', f'samples-LSTM2-fasttext-{val_string}.pickle'), 'rb') as infile1:
+with open(os.path.join('data', 'pickles', f'samples-LSTM2-fasttext-{val_string}.pickle'), 'rb') as infile1:
     val_data = pickle.load(infile1)
 
 print(f'Train data shape: {train_data.shape}')
@@ -43,13 +43,13 @@ end_data_padding = np.tile(train_blank_array, (8, 1))
 padded_train_data = np.concatenate((start_data_padding, train_data, end_data_padding), axis=0)
 padded_val_data = np.concatenate((start_data_padding, val_data, end_data_padding), axis=0)
 
-for aspect in morphs[7:]:
+for aspect in morphs:
 
     # Load different labels for each aspect of morphology
     print('Loading training labels...')
-    with open(os.path.join('../data', 'pickles', f'labels-{aspect.title}-{sample_string}.pickle'), 'rb') as infile1:
+    with open(os.path.join('data', 'pickles', f'labels-{aspect.title}-{sample_string}.pickle'), 'rb') as infile1:
         train_labels = pickle.load(infile1)
-    with open(os.path.join('../data', 'pickles', f'labels-{aspect.title}-{val_string}.pickle'), 'rb') as infile2:
+    with open(os.path.join('data', 'pickles', f'labels-{aspect.title}-{val_string}.pickle'), 'rb') as infile2:
         val_labels = pickle.load(infile2)
 
     print(f'Train labels shape: {train_labels.shape}')
@@ -88,4 +88,4 @@ for aspect in morphs[7:]:
     modelSaver = ModelSaver(aspect.title, nn_type, nn_layers, cells, corpus_string)
 
     model.compile(optimizer='adam', loss=tf.keras.losses.CategoricalCrossentropy(), metrics=['accuracy'])
-    model.fit(train_gen, epochs=40, validation_data=val_gen, verbose=2, callbacks=[modelSaver])
+    model.fit(train_gen, epochs=100, validation_data=val_gen, verbose=2, callbacks=[modelSaver])
