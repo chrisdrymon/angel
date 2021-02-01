@@ -21,7 +21,7 @@ setup(
     description='An Ancient Greek Morphology Tagger',
     long_description=open('README.md', encoding='utf-8').read(),
     long_description_content_type='text/markdown',
-    url='chrisdrymon.com',
+    url='https://chrisdrymon.com',
     author='Chris Drymon',
     author_email='chrisdrymon@yahoo.com',
     license='MIT',
