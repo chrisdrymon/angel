@@ -22,14 +22,14 @@ sample_string = 'AGDT-first26'
 val_string = 'AGDT-last7'
 corpus_string = 'AGDTfirst26last7'
 nn_type = 'lstm2'
-nn_layers = 2
+nn_layers = 3
 cells = 128
 
 # Import samples
 print('Loading samples and validation...')
-with open(os.path.join('../data', 'pickles', f'samples-LSTM2-fasttext-{sample_string}.pickle'), 'rb') as infile1:
+with open(os.path.join('data', 'pickles', f'samples-LSTM2-fasttext-{sample_string}.pickle'), 'rb') as infile1:
     train_data = pickle.load(infile1)
-with open(os.path.join('../data', 'pickles', f'samples-LSTM2-fasttext-{val_string}.pickle'), 'rb') as infile1:
+with open(os.path.join('data', 'pickles', f'samples-LSTM2-fasttext-{val_string}.pickle'), 'rb') as infile1:
     val_data = pickle.load(infile1)
 
 print(f'Train data shape: {train_data.shape}')

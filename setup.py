@@ -12,6 +12,7 @@ classifiers = [
     'Operating System :: MacOS :: MacOS X',
     'Programming Language :: Python :: 3 :: Only',
     'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
     'Topic :: Text Processing :: Linguistic'
 ]
 
@@ -28,7 +29,7 @@ setup(
     classifiers=classifiers,
     keywords=['greek', 'ancient greek', 'morphology', 'classics', 'computational linguistics'],
     packages=find_packages(),
-    python_requires='>=3.7',
+    python_requires='=3.7.*, =3.8.*',
     install_requires=['tensorflow',
                       'numpy',
                       'gdown',

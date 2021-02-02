@@ -107,7 +107,8 @@ def elision_normalize(s):
 
 def isolate_greek_punctuation(fsentence):
     return fsentence.replace(',', ' , ').replace('·', ' · ').replace(';', ' ; ').replace('.', ' . ').\
-        replace('?', ' ? ').replace('»', ' » ').replace('«', ' « ').replace('“', ' “ ').replace('„', ' „ ')
+        replace('?', ' ? ').replace('»', ' » ').replace('«', ' « ').replace('“', ' “ ').replace('„', ' „ ').\
+        replace('(', ' ( ').replace(')', ' ) ')
 
 
 def vector_lookup(gword):
