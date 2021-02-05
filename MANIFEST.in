@@ -1,3 +1,4 @@
 include CHANGELOG.txt
 include LICENSE.txt
 include angel/__init__.py
+exclude angel/tryout.py

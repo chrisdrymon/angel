@@ -16,3 +16,23 @@ Changed tensorflow's verbosity setting.
 0.0.4 (31 Jan 2021)
 -------------------
 Moved annotator and character tuples. Changed print output while doing inference.
+
+0.0.5 (1 Feb 2021)
+------------------
+Explicitly stated incompatibility with Python 3.9
+
+0.0.6 (4 Feb 2021)
+------------------
+Fixing setup.py to state exclusion of Python 3.9 properly.
+
+0.0.7 (4 Feb 2021)
+------------------
+Attempting to fix setup.py 3.9 exclusion again.
+
+0.0.8 (4 Feb 2021)
+------------------
+Another attempt at fixing setup dependencies
+
+0.0.9 (4 Feb 2021)
+------------------
+Got 3.9 exclusion properly configured.

@@ -106,9 +106,11 @@ def elision_normalize(s):
 
 
 def isolate_greek_punctuation(fsentence):
+    """Place spaces around punctuation so it can be easily split into its own token later."""
     return fsentence.replace(',', ' , ').replace('·', ' · ').replace(';', ' ; ').replace('.', ' . ').\
         replace('?', ' ? ').replace('»', ' » ').replace('«', ' « ').replace('“', ' “ ').replace('„', ' „ ').\
-        replace('(', ' ( ').replace(')', ' ) ')
+        replace('(', ' ( ').replace(')', ' ) ').replace('>', ' > ').replace('<', ' < ').replace(':', ' : ').\
+        replace('‘', ' ‘ ')
 
 
 def vector_lookup(gword):
