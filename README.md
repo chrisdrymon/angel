@@ -19,8 +19,7 @@ Output:
 
 If you just need to tag one sentence, then the above example is fine. But if you want to tag an entire document, don't 
 feed it to the tagger one 
-sentence at a time; or even worse, one token at a time. It'll take forever that way and accuracy will suffer. Just
-give it the entire document all at once.
+sentence at a time; or even worse, one token at a time. It'll take forever that way and accuracy will suffer. Give it the entire document as a single string all at once.
 
     from angel import tag
 
@@ -29,7 +28,7 @@ give it the entire document all at once.
 
     results = tag(entire_book)
 
-It is possible that an excessively large string may cause memory issues. If you run into that problem, then
+It is possible that an exceedingly large string may cause memory issues. If you run into that problem, then
 perhaps split the text in half and try that. This is an issue that will be addressed in later releases.
 
 ## Design
