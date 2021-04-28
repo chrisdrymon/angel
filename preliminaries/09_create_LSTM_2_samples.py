@@ -1,3 +1,7 @@
+"""Run the outputs of LSTM1 through the DNNs. For each token, concatenate the DNNs outputs together. Then
+concatenate that with the annotator tensor and the word vector. That fully concatenated vector will represent one
+token for input into LSTM2. The samples are saved to a numpy array and exported as a pickle."""
+
 import os
 import pickle
 import numpy as np

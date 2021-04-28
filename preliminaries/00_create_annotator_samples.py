@@ -1,3 +1,7 @@
+"""Create a tensor indicating the token's annotator(s) for every token in the corpus. Add each of those tensors
+into a numpy list and export it as a pickle. They will later be combined with the rest of each token's data to be used
+as training samples."""
+
 import os
 from bs4 import BeautifulSoup
 import pickle
@@ -14,7 +18,6 @@ for file in sorted(os.listdir(gorman_folder)):
     all_files.append(os.path.join(gorman_folder, file))
 
 file_count = 0
-py_samples = []
 annotator_samples = []
 
 # Load character list and annotator list

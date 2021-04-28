@@ -1,3 +1,6 @@
+"""Train LSTM2 on the concatenated outputs samples of the DNNs. Save the trained model. It considers 7 words to the
+left and 7 words to the right of the target word as well as the target word itself."""
+
 import os
 import pickle
 import tensorflow as tf
