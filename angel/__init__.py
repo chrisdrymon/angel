@@ -312,7 +312,7 @@ if os.path.isdir(model_folder) and 'fasttext.wordvectors' in os.listdir(model_fo
 else:
     # Download the models if they don't exist
     print('Ancient Greek language models need to be downloaded. Once downloaded, the models will be saved locally. '
-          'This should only be required once. It may take a minute. These are big files.')
+          'This should only be required once. It may take a minute. There are about 1 GB worth of models.')
     print('Downloading models...')
 
     # URL needs to look like https://drive.google.com/uc?id=1-w6Ld2r1Z9kKI2oZ3RWTsmNdJSb12hxP
