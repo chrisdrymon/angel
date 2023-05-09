@@ -36,3 +36,7 @@ Another attempt at fixing setup dependencies
 0.0.9 (4 Feb 2021)
 ------------------
 Got 3.9 exclusion properly configured.
+
+0.0.10 (9 May 2023)
+------------------
+Fixed setup.py Python requirements. Tensorflow should work with anything >=3.7.
